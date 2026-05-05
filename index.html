@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADC — Datagedreven impact management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green: #4AF08C;
+    --green-deep: #2DD46E;
+    --pink: #FF9EE8;
+    --pink-deep: #FF6FD8;
+    --lilac: #C8B6FF;
+    --lilac-deep: #A78BFA;
+    --ink: #0A0A0A;
+    --ink-soft: #2A2A2A;
+    --paper: #FAFAF7;
+    --line: rgba(10,10,10,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.55;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  .display{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.02em;font-weight:700;line-height:1.02}
+
+  /* ============ NAV ============ */
+  nav.top{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 36px;
+    background:rgba(250,250,247,.85);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo svg{width:62px;height:auto;display:block}
+  .logo span{font-family:'Inter',sans-serif;font-weight:400;font-size:11px;color:var(--ink-soft);letter-spacing:0;line-height:1.2;border-left:1px solid var(--line);padding-left:10px}
+  .nav-links{display:flex;gap:24px;align-items:center}
+  .nav-links a{
+    color:var(--ink);text-decoration:none;font-size:13px;font-weight:500;
+    position:relative;padding:4px 0;
+  }
+  .nav-links a::after{
+    content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--ink);
+    transition:width .25s ease;
+  }
+  .nav-links a:hover::after{width:100%}
+  .lang-switch{
+    display:flex;border:1px solid var(--ink);border-radius:999px;overflow:hidden;
+    font-size:12px;font-weight:600;
+  }
+  .lang-switch button{
+    background:none;border:none;padding:6px 12px;cursor:pointer;font:inherit;
+    color:var(--ink);transition:all .2s;
+  }
+  .lang-switch button.active{background:var(--ink);color:var(--paper)}
+
+  /* ============ ADC GEOMETRIC SHAPES (used in section bg's) ============ */
+  .shape-deco{position:absolute;pointer-events:none;z-index:1}
+  .shape-deco svg{width:100%;height:100%;display:block;overflow:visible}
+
+  /* ============ HERO (GREEN) ============ */
+  section.hero{
+    background:var(--green);
+    min-height:100vh;
+    padding:140px 36px 80px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-content{max-width:1200px;margin:0 auto;position:relative;z-index:2}
+  .hero-tag{
+    display:inline-block;font-size:13px;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;background:var(--ink);color:var(--green);
+    padding:6px 14px;border-radius:999px;margin-bottom:36px;
+  }
+  .hero h1{font-size:clamp(48px,9vw,128px);max-width:14ch;margin-bottom:32px}
+  .hero h1 em{font-style:normal;background:var(--ink);color:var(--green);padding:0 12px;display:inline-block;transform:rotate(-1deg)}
+  .hero-sub{font-size:clamp(18px,2vw,24px);max-width:60ch;font-weight:500;line-height:1.4}
+  .hero-cta{margin-top:48px;display:flex;gap:16px;flex-wrap:wrap}
+  .btn{
+    padding:16px 28px;border-radius:999px;font-weight:600;font-size:15px;
+    text-decoration:none;display:inline-flex;align-items:center;gap:10px;
+    transition:transform .2s,box-shadow .2s;cursor:pointer;border:none;font-family:inherit;
+  }
+  .btn-dark{background:var(--ink);color:var(--paper)}
+  .btn-light{background:var(--paper);color:var(--ink);border:1px solid var(--ink)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.15)}
+  .btn .arrow{display:inline-block;transition:transform .2s}
+  .btn:hover .arrow{transform:translateX(4px)}
+
+  .hero-shapes-1{top:60px;right:-40px;width:560px;height:560px}
+  .hero-shapes-2{bottom:40px;left:-60px;width:280px;height:280px;opacity:.7}
+
+  /* ============ WHAT (paper) ============ */
+  section.what{padding:120px 36px;max-width:1200px;margin:0 auto}
+  .section-label{
+    font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-soft);margin-bottom:24px;display:flex;align-items:center;gap:12px;
+  }
+  .section-label::before{content:'';width:32px;height:2px;background:var(--ink)}
+  .section-title{font-size:clamp(36px,5vw,64px);margin-bottom:32px;max-width:20ch}
+  .section-title em{font-style:normal;color:var(--green-deep)}
+  .what-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:start;margin-top:48px}
+  .what-text p{font-size:17px;color:var(--ink-soft);margin-bottom:18px;max-width:55ch}
+  .what-text p strong{color:var(--ink)}
+  .what-quote{
+    background:var(--ink);color:var(--paper);padding:40px;border-radius:24px;
+    font-family:'Space Grotesk',sans-serif;font-size:22px;line-height:1.3;font-weight:500;
+    position:relative;
+  }
+  .what-quote::before{
+    content:'"';position:absolute;top:-30px;left:24px;font-size:140px;color:var(--green);
+    font-family:'Space Grotesk',sans-serif;line-height:1;
+  }
+  .what-quote cite{display:block;margin-top:20px;font-size:13px;font-style:normal;color:var(--green);font-family:'Inter',sans-serif;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+
+  /* ============ VALUE (4 pillars, GREEN) ============ */
+  section.value{
+    background:var(--green);
+    padding:120px 36px;
+    position:relative;overflow:hidden;
+  }
+  .value-shapes{top:30px;right:-30px;width:300px;height:300px;opacity:.6}
+  .value-inner{max-width:1300px;margin:0 auto;position:relative;z-index:2}
+  .value-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:60px}
+  .pillar{
+    background:var(--paper);
+    border:2px solid var(--ink);
+    border-radius:24px;
+    padding:32px 28px 28px;
+    cursor:pointer;
+    transition:transform .25s ease,box-shadow .25s ease,background .25s ease;
+    position:relative;
+    min-height:340px;
+    display:flex;flex-direction:column;
+  }
+  .pillar:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 var(--ink)}
+  .pillar.active{background:var(--ink);color:var(--green)}
+  .pillar.active .pillar-num{background:var(--green);color:var(--ink)}
+  .pillar-num{
+    width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--green);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;
+    font-family:'Space Grotesk',sans-serif;margin-bottom:24px;transition:all .25s;
+  }
+  .pillar-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;line-height:1.15;margin-bottom:16px}
+  .pillar-short{font-size:14px;line-height:1.5;flex:1}
+  .pillar-expand{
+    font-size:13px;font-weight:600;margin-top:18px;display:flex;align-items:center;gap:6px;
+    text-transform:uppercase;letter-spacing:.05em;
+  }
+  .pillar-detail{display:none;font-size:14px;line-height:1.55;margin-top:16px;border-top:1px solid currentColor;padding-top:16px}
+  .pillar.active .pillar-detail{display:block}
+  .pillar.active .pillar-short{display:none}
+
+  /* ============ APPROACH (paper, 4 steps) ============ */
+  section.approach{padding:120px 36px;max-width:1300px;margin:0 auto}
+  .approach-flow{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:60px;
+    position:relative;
+  }
+  .step{
+    background:var(--paper);
+    border:2px solid var(--ink);
+    border-radius:0;
+    padding:32px 28px;
+    cursor:pointer;
+    transition:background .25s,color .25s;
+    position:relative;
+    min-height:380px;
+  }
+  .step:first-child{border-radius:24px 0 0 24px}
+  .step:last-child{border-radius:0 24px 24px 0}
+  .step:not(:first-child){border-left:none}
+  .step.active,.step:hover{background:var(--ink);color:var(--paper)}
+  .step.active .step-num,.step:hover .step-num{background:var(--green);color:var(--ink)}
+  .step-num{
+    width:36px;height:36px;background:var(--ink);color:var(--green);
+    border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;margin-bottom:20px;
+    transition:all .25s;
+  }
+  .step h3{font-family:'Space Grotesk',sans-serif;font-size:20px;line-height:1.2;margin-bottom:14px;font-weight:700}
+  .step p{font-size:14px;line-height:1.5;margin-bottom:12px}
+  .step ul{font-size:13px;line-height:1.5;margin-top:12px;padding-left:0;list-style:none}
+  .step ul li{position:relative;padding-left:18px;margin-bottom:6px}
+  .step ul li::before{content:'→';position:absolute;left:0;top:0;font-weight:700}
+  .step .arrow-between{
+    position:absolute;right:-14px;top:50%;transform:translateY(-50%);z-index:3;
+    width:28px;height:28px;background:var(--green);border:2px solid var(--ink);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-weight:700;
+  }
+  .step:last-child .arrow-between{display:none}
+
+  /* ============ TOC (Theory of Change, PINK) ============ */
+  section.toc{
+    background:var(--pink);
+    padding:120px 36px;
+    position:relative;overflow:hidden;
+  }
+  .toc-shapes-1{top:80px;left:-40px;width:280px;height:280px;opacity:.5}
+  .toc-shapes-2{bottom:60px;right:-40px;width:240px;height:240px;opacity:.45}
+  .toc-inner{max-width:1300px;margin:0 auto;position:relative;z-index:2}
+  .toc-section-title em{color:var(--paper);background:var(--ink);padding:0 12px}
+  .toc-intro{max-width:60ch;font-size:17px;margin-bottom:60px;color:var(--ink)}
+  .toc-model{
+    background:var(--paper);
+    border:2px solid var(--ink);
+    border-radius:24px;
+    padding:40px;
+    display:grid;grid-template-columns:1fr 1.5fr;gap:48px;align-items:start;
+  }
+  .toc-pyramid{display:flex;flex-direction:column;gap:8px}
+  .toc-level{
+    background:var(--paper);
+    border:2px solid var(--ink);
+    border-radius:14px;
+    padding:18px 22px;
+    cursor:pointer;
+    transition:all .25s ease;
+    display:flex;align-items:center;gap:14px;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;
+  }
+  .toc-level:hover{transform:translateX(8px)}
+  .toc-level.active{background:var(--ink);color:var(--pink)}
+  .toc-level .lvl-icon{
+    width:32px;height:32px;background:var(--ink);color:var(--pink);
+    border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-size:14px;flex-shrink:0;
+  }
+  .toc-level.active .lvl-icon{background:var(--pink);color:var(--ink)}
+  .toc-level-text{display:flex;flex-direction:column;flex:1;min-width:0}
+  .toc-level .lvl-name{font-size:18px;line-height:1.1}
+  .toc-level .lvl-scope{font-size:10px;font-weight:600;opacity:.65;text-transform:uppercase;letter-spacing:.05em;margin-top:3px;line-height:1.2}
+
+  .toc-level-1{margin-left:0}
+  .toc-level-2{margin-left:24px}
+  .toc-level-3{margin-left:48px}
+  .toc-level-4{margin-left:72px}
+
+  .toc-detail{
+    background:var(--pink);border:2px solid var(--ink);border-radius:14px;padding:32px;min-height:340px;
+  }
+  .toc-detail h3{font-family:'Space Grotesk',sans-serif;font-size:28px;margin-bottom:16px;line-height:1.1}
+  .toc-detail p{font-size:15px;line-height:1.55;margin-bottom:14px}
+  .toc-detail .example{
+    background:var(--ink);color:var(--pink);padding:18px;border-radius:10px;margin-top:16px;
+    font-size:14px;
+  }
+  .toc-detail .example strong{display:block;margin-bottom:6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper)}
+
+  /* ============ INDICATORS (paper) ============ */
+  section.indicators{padding:120px 36px;max-width:1300px;margin:0 auto;position:relative}
+  .ind-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:60px;margin-top:60px;align-items:start}
+  .ind-text p{font-size:16px;line-height:1.6;color:var(--ink-soft);margin-bottom:18px;max-width:55ch}
+  .ind-text p strong{color:var(--ink)}
+  .ind-criteria{
+    background:var(--ink);color:var(--paper);border-radius:24px;padding:36px;
+  }
+  .ind-criteria h3{font-family:'Space Grotesk',sans-serif;font-size:20px;margin-bottom:24px;color:var(--green)}
+  .crit-row{
+    display:grid;grid-template-columns:48px 1fr;gap:18px;padding:18px 0;
+    border-bottom:1px solid rgba(250,250,247,.15);align-items:start;
+  }
+  .crit-row:last-child{border-bottom:none}
+  .crit-icon{
+    width:42px;height:42px;border-radius:10px;background:var(--green);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;
+  }
+  .crit-row h4{font-size:15px;font-family:'Space Grotesk',sans-serif;margin-bottom:4px;color:var(--paper)}
+  .crit-row p{font-size:13px;color:rgba(250,250,247,.75);line-height:1.5;margin:0}
+
+  .ind-scales{margin-top:50px}
+  .scale-row{display:grid;grid-template-columns:160px 1fr 160px;gap:16px;align-items:center;margin-bottom:20px}
+  .scale-row span{font-size:13px;font-weight:600}
+  .scale-row span:first-child{text-align:right;color:var(--ink-soft)}
+  .scale-row span:last-child{text-align:left;color:var(--ink-soft)}
+  .scale-bar{
+    height:14px;border-radius:999px;background:linear-gradient(90deg,var(--paper),var(--green));
+    border:2px solid var(--ink);position:relative;
+  }
+  .scale-bar.alt{background:linear-gradient(90deg,var(--paper),var(--pink-deep))}
+
+  /* ============ AI APPLICATIONS (LILAC) ============ */
+  section.ai{
+    background:var(--lilac);
+    padding:120px 36px;
+    position:relative;overflow:hidden;
+  }
+  .ai-shapes-1{top:60px;right:-50px;width:340px;height:340px;opacity:.55}
+  .ai-shapes-2{bottom:0;left:-30px;width:200px;height:200px;opacity:.5}
+  .ai-inner{max-width:1300px;margin:0 auto;position:relative;z-index:2}
+  .ai-section-title em{color:var(--paper);background:var(--ink);padding:0 12px}
+  .ai-intro{max-width:65ch;font-size:17px;margin-bottom:60px;color:var(--ink)}
+  .ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .ai-card{
+    background:var(--paper);border:2px solid var(--ink);border-radius:20px;
+    padding:0;overflow:hidden;
+    display:flex;flex-direction:column;
+    transition:transform .2s,box-shadow .2s;
+  }
+  .ai-card:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 var(--ink)}
+  .ai-card-header{
+    background:var(--ink);color:var(--lilac);padding:20px 22px;
+    border-bottom:2px solid var(--ink);
+  }
+  .ai-card-header .ai-tag{
+    font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    font-weight:700;color:var(--paper);opacity:.6;margin-bottom:6px;
+  }
+  .ai-card-header h3{font-family:'Space Grotesk',sans-serif;font-size:17px;line-height:1.25;font-weight:700;color:var(--paper)}
+  .ai-card-body{padding:0;display:flex;flex-direction:column;flex:1}
+  .ai-row{
+    display:grid;grid-template-columns:90px 1fr;gap:14px;
+    padding:16px 22px;border-bottom:1px solid var(--line);align-items:start;
+  }
+  .ai-row:last-child{border-bottom:none}
+  .ai-row .label{
+    background:var(--lilac);color:var(--ink);font-size:11px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.04em;
+    padding:6px 8px;border-radius:6px;text-align:center;line-height:1.15;
+  }
+  .ai-row .content{font-size:13px;line-height:1.5;color:var(--ink-soft)}
+
+  /* ============ EXAMPLES (paper, 3 cases - now full impact model) ============ */
+  section.examples{padding:120px 36px;max-width:1400px;margin:0 auto}
+  .example-block{
+    margin-top:60px;border:2px solid var(--ink);border-radius:24px;overflow:hidden;
+    background:var(--paper);
+  }
+  .example-header{
+    padding:28px 32px;background:var(--paper);border-bottom:2px solid var(--ink);
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+    cursor:pointer;transition:background .2s;
+  }
+  .example-header:hover{background:#F0F0EA}
+  .example-tag{
+    font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);margin-bottom:6px;
+  }
+  .example-header h3{font-family:'Space Grotesk',sans-serif;font-size:24px;line-height:1.2;max-width:60ch}
+  .example-toggle{
+    width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--green);
+    display:flex;align-items:center;justify-content:center;font-size:24px;
+    transition:transform .25s;flex-shrink:0;
+  }
+  .example-block.open .example-toggle{transform:rotate(45deg)}
+  .example-body{
+    display:none;padding:32px;background:var(--paper);
+  }
+  .example-block.open .example-body{display:block}
+
+  .impact-model{display:grid;gap:14px}
+  .im-row{
+    display:grid;grid-template-columns:140px 1fr;gap:18px;align-items:stretch;
+  }
+  .im-label{
+    background:var(--ink);color:var(--paper);
+    font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:13px;text-transform:uppercase;letter-spacing:.08em;
+    padding:14px 18px;border-radius:12px;
+    display:flex;align-items:center;justify-content:flex-start;
+  }
+  .im-label.impact{background:var(--ink);color:var(--green)}
+  .im-label.outcomes{background:var(--green);color:var(--ink)}
+  .im-label.outputs{background:var(--pink);color:var(--ink)}
+  .im-label.activities{background:var(--lilac);color:var(--ink)}
+  .im-cards{display:flex;gap:10px;flex-wrap:wrap}
+  .im-card{
+    background:var(--paper);border:2px solid var(--ink);border-radius:12px;
+    padding:14px 16px;font-size:14px;line-height:1.4;flex:1;min-width:180px;
+  }
+  .im-arrow{
+    text-align:center;color:var(--ink-soft);font-size:20px;margin:-4px 0;
+    grid-column:1/-1;
+  }
+  .im-assumption{
+    margin-top:12px;background:#FFF8E1;border:2px dashed var(--ink);
+    border-radius:12px;padding:14px 18px;font-size:13px;
+    grid-column:2;display:flex;gap:10px;align-items:flex-start;
+  }
+  .im-assumption-label{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;
+    text-transform:uppercase;letter-spacing:.06em;color:var(--ink);
+    background:var(--ink);color:#FFF8E1;padding:3px 8px;border-radius:6px;flex-shrink:0;
+  }
+
+  /* ============ CONTACT (GREEN) ============ */
+  section.contact{
+    background:var(--green);padding:120px 36px;position:relative;overflow:hidden;
+  }
+  .contact-shapes{top:60px;right:-40px;width:380px;height:380px;opacity:.55}
+  .contact-inner{max-width:1300px;margin:0 auto;position:relative;z-index:2}
+  .contact-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;margin-top:48px;align-items:start}
+  .contact-cta{font-size:clamp(28px,3.5vw,42px);font-family:'Space Grotesk',sans-serif;font-weight:700;line-height:1.1;margin-bottom:32px}
+  .person{background:var(--ink);color:var(--green);padding:32px;border-radius:18px}
+  .person-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;margin-bottom:6px}
+  .person-role{font-size:13px;color:var(--paper);margin-bottom:18px;font-weight:500}
+  .person a{color:var(--green);text-decoration:none;display:block;font-size:14px;margin-bottom:6px;font-weight:500}
+  .person a:hover{text-decoration:underline}
+  .contact-cta-btn{margin-top:24px;display:inline-flex}
+
+  /* ============ FOOTER ============ */
+  footer{
+    background:var(--ink);color:var(--paper);padding:48px 36px 24px;
+  }
+  .footer-inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px}
+  .footer-brand svg{width:80px;height:auto;margin-bottom:8px}
+  .footer-brand svg path{fill:var(--green)!important}
+  .footer-brand .sub{font-family:'Space Grotesk',sans-serif;font-weight:400;font-size:13px;color:var(--green);display:block}
+  .footer-col h5{font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;color:var(--green)}
+  .footer-col p,.footer-col a{font-size:13px;color:rgba(250,250,247,.75);text-decoration:none;display:block;margin-bottom:6px;line-height:1.5}
+  .footer-bottom{border-top:1px solid rgba(250,250,247,.1);margin-top:40px;padding-top:20px;font-size:12px;color:rgba(250,250,247,.5);text-align:center}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:1100px){
+    .ai-grid{grid-template-columns:1fr}
+    .approach-flow{grid-template-columns:repeat(2,1fr)}
+    .step:nth-child(2){border-radius:0 24px 0 0}
+    .step:nth-child(3){border-radius:0 0 0 24px;border-left:2px solid var(--ink)}
+    .step:first-child{border-radius:24px 0 0 0}
+    .step:last-child{border-radius:0 0 24px 0;border-left:none}
+    .value-grid{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:900px){
+    .nav-links{display:none}
+    nav.top{padding:14px 20px}
+    section.hero{padding:120px 20px 60px}
+    section.what,section.value,section.approach,section.toc,section.examples,section.indicators,section.ai,section.contact{padding-left:20px;padding-right:20px}
+    .what-grid,.value-grid,.approach-flow,.toc-model,.contact-grid,.footer-inner,.ind-grid{grid-template-columns:1fr;gap:24px}
+    .step{border-radius:14px!important;border-left:2px solid var(--ink)!important;margin-bottom:8px}
+    .step .arrow-between{display:none}
+    .toc-level-2,.toc-level-3,.toc-level-4{margin-left:0}
+    .im-row{grid-template-columns:1fr}
+    .im-label{justify-content:center}
+    .im-assumption{grid-column:1}
+    .scale-row{grid-template-columns:1fr;gap:6px}
+    .scale-row span:first-child,.scale-row span:last-child{text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<!-- Hidden SVG sprite of geometric ADC shapes — referenced via <use> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Plus / cross with thick rounded arms -->
+    <symbol id="adc-plus" viewBox="0 0 100 100">
+      <path d="M40 4 h20 a4 4 0 0 1 4 4 v32 h32 a4 4 0 0 1 4 4 v20 a4 4 0 0 1 -4 4 h-32 v32 a4 4 0 0 1 -4 4 h-20 a4 4 0 0 1 -4 -4 v-32 h-32 a4 4 0 0 1 -4 -4 v-20 a4 4 0 0 1 4 -4 h32 v-32 a4 4 0 0 1 4 -4 z" fill="currentColor"/>
+    </symbol>
+    <!-- Diamond / rotated square -->
+    <symbol id="adc-diamond" viewBox="0 0 100 100">
+      <rect x="20" y="20" width="60" height="60" rx="6" transform="rotate(45 50 50)" fill="currentColor"/>
+    </symbol>
+    <!-- Pill / capsule horizontal -->
+    <symbol id="adc-pill" viewBox="0 0 100 40">
+      <rect x="0" y="0" width="100" height="40" rx="20" fill="currentColor"/>
+    </symbol>
+    <!-- Bone / capsule with circles on ends -->
+    <symbol id="adc-bone" viewBox="0 0 140 40">
+      <circle cx="20" cy="20" r="20" fill="currentColor"/>
+      <rect x="20" y="6" width="100" height="28" fill="currentColor"/>
+      <circle cx="120" cy="20" r="20" fill="currentColor"/>
+    </symbol>
+    <!-- Small dot -->
+    <symbol id="adc-dot" viewBox="0 0 20 20">
+      <circle cx="10" cy="10" r="10" fill="currentColor"/>
+    </symbol>
+    <!-- Tiny x -->
+    <symbol id="adc-x" viewBox="0 0 30 30">
+      <path d="M5 8 l3 -3 l7 7 l7 -7 l3 3 l-7 7 l7 7 l-3 3 l-7 -7 l-7 7 l-3 -3 l7 -7 z" fill="currentColor"/>
+    </symbol>
+    <!-- Rounded square -->
+    <symbol id="adc-rsquare" viewBox="0 0 60 60">
+      <rect x="0" y="0" width="60" height="60" rx="12" fill="currentColor"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- Reusable shape composition (white-on-color background decoration) -->
+<!-- Inline as template in JS to vary per section -->
+
+<!-- ============ NAV ============ -->
+<nav class="top">
+  <a href="#top" class="logo" style="text-decoration:none">
+    <svg viewBox="0 0 76 30" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M74.7535 19.3205L68.8386 17.5834C68.6602 17.5248 68.5014 17.603 68.4428 17.8424C67.6512 20.5959 65.8115 23.3127 61.9342 23.3127C57.5829 23.3127 54.9907 20.1976 54.9907 14.6492C54.9907 9.10078 57.5634 6.02728 61.8951 6.02728C65.2789 6.02728 67.3751 8.30187 67.9102 10.0194C67.9688 10.2002 68.1081 10.2784 68.2864 10.2198L74.1036 8.3434C74.2819 8.28232 74.3601 8.14306 74.3015 7.98426C72.8942 3.55236 68.5625 0 61.7363 0C57.3704 0 53.7398 1.56607 51.2502 4.28531C50.5539 5.04513 49.3543 5.04025 48.6385 4.29508C46.337 1.90078 42.9557 0.596132 38.6362 0.596132H26.7062C26.5792 0.596132 26.4643 0.686529 26.4253 0.803801V0.81113C26.4253 0.81113 26.4204 0.81846 26.4204 0.823346C26.413 0.847778 26.4106 0.872209 26.4106 0.896641V14.2901C26.4106 15.7144 24.417 16.0418 23.9601 14.6932L19.2888 0.838005C19.2301 0.657211 19.1104 0.598575 18.9516 0.598575H9.65294C9.49413 0.598575 9.37686 0.659654 9.31578 0.838005L0.0195405 28.4018C-0.0390955 28.6021 0.0390857 28.7414 0.256526 28.7414H7.12182C7.28063 28.7414 7.3979 28.6827 7.45898 28.5019L8.54619 24.7883C8.82226 23.8306 9.45504 23.4104 10.425 23.4104H18.1796C19.1495 23.4104 19.7823 23.8306 20.0584 24.7883L21.1651 28.5019C21.2238 28.6827 21.3435 28.7414 21.5023 28.7414H38.7925C40.7178 28.7414 42.4597 28.4433 44.0038 27.8863C45.7995 27.2608 47.3192 26.3055 48.5359 25.04C49.2517 24.2973 50.4489 24.2899 51.1476 25.0498C53.6397 27.7714 57.2677 29.3351 61.6337 29.3351C61.6679 29.3351 61.6996 29.3351 61.7338 29.3351C69.1537 29.3351 73.4855 24.8641 74.9685 19.6553C75.0076 19.4964 74.9294 19.3767 74.751 19.3157L74.7535 19.3205ZM15.9832 18.1845H12.6409C11.6514 18.1845 10.9796 17.4466 11.2361 16.4669L13.154 9.82152C13.4301 8.66346 15.1525 8.66346 15.4481 9.82152L17.366 16.4669C17.6225 17.4442 16.9702 18.1845 15.9807 18.1845H15.9832ZM35.4332 22.653C34.4046 22.653 33.6326 21.8736 33.6326 20.8377V8.48266C33.6326 8.23835 33.6741 8.01113 33.7523 7.80591C34.0088 7.13159 34.6441 6.68694 35.4308 6.68694H38.2208C42.3351 6.68694 44.5511 9.52101 44.5511 14.6297C44.5511 15.7682 44.4411 16.7968 44.2261 17.708C44.2188 17.7398 44.2115 17.7691 44.2042 17.7984C44.1797 17.8986 44.1528 17.9963 44.126 18.0941C43.3002 21.0405 41.2895 22.6506 38.2184 22.6506H35.4283L35.4332 22.653Z" fill="black"/>
+    </svg>
+    <span>Data &amp; AI<br>Consultancy</span>
+  </a>
+  <div class="nav-links">
+    <a href="#what" data-i18n="nav.what">Wat is het?</a>
+    <a href="#value" data-i18n="nav.value">Waarde</a>
+    <a href="#approach" data-i18n="nav.approach">Aanpak</a>
+    <a href="#toc" data-i18n="nav.toc">Methodologie</a>
+    <a href="#indicators" data-i18n="nav.indicators">Indicatoren</a>
+    <a href="#ai" data-i18n="nav.ai">AI &amp; data</a>
+    <a href="#examples" data-i18n="nav.examples">Voorbeelden</a>
+    <a href="#contact" data-i18n="nav.contact">Contact</a>
+  </div>
+  <div class="lang-switch">
+    <button class="active" data-lang="nl">NL</button>
+    <button data-lang="en">EN</button>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="shape-deco hero-shapes-1" id="heroShapes1" style="color:#FAFAF7"></div>
+  <div class="shape-deco hero-shapes-2" id="heroShapes2" style="color:#FAFAF7"></div>
+
+  <div class="hero-content">
+    <div class="hero-tag" data-i18n="hero.tag">Datagedreven Impact Management</div>
+    <h1 class="display"><span data-i18n="hero.h1.a">Maak je</span> <em data-i18n="hero.h1.b">impact</em> <span data-i18n="hero.h1.c">meetbaar, zichtbaar en stuurbaar.</span></h1>
+    <p class="hero-sub" data-i18n="hero.sub">Van evaluatie achteraf naar dynamisch impact monitoren, evalueren en bijsturen. Gebruik data en AI voor concrete maatschappelijke impact.</p>
+    <div class="hero-cta">
+      <a href="#approach" class="btn btn-dark"><span data-i18n="hero.cta1">Ontdek de aanpak</span> <span class="arrow">→</span></a>
+      <a href="https://adc-consulting.com/contact/" target="_blank" rel="noopener" class="btn btn-light"><span data-i18n="hero.cta2">Plan een gesprek</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHAT ============ -->
+<section class="what" id="what">
+  <div class="section-label" data-i18n="what.label">01 — Wat is het</div>
+  <h2 class="section-title display"><span data-i18n="what.title.a">Wat is</span> <em data-i18n="what.title.b">datagedreven impact management</em><span data-i18n="what.title.c">?</span></h2>
+  <div class="what-grid">
+    <div class="what-text">
+      <p data-i18n="what.p1">Steeds meer organisaties willen data gebruiken om inzicht te krijgen in de impact van hun werk. Met datagedreven impact management kan een organisatie beter beoordelen welk werk er nodig is om een beoogde maatschappelijke impact te bereiken, hoe effectief ze werkt, en kan ze communiceren over behaalde resultaten.</p>
+      <p data-i18n="what.p2">Hier geldt het bekende gezegde <strong>"meten is weten"</strong>. Door de beoogde en gerealiseerde impact te specificeren en te kwantificeren kan een organisatie haar strategieën en activiteiten beter inrichten.</p>
+      <p data-i18n="what.p3">Klassieke beleidsanalyse en -evaluatie zijn gericht op het achteraf afleggen van verantwoording. Dit is belangrijk maar is vaak minder goed bruikbaar voor besluitvorming over <strong>lopende of toekomstige activiteiten</strong>.</p>
+    </div>
+    <div class="what-quote">
+      <span data-i18n="what.quote">Meten is weten.</span>
+      <cite data-i18n="what.cite">— Nederlands gezegde</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VALUE / 4 PILLARS ============ -->
+<section class="value" id="value">
+  <div class="shape-deco value-shapes" id="valueShapes" style="color:#FAFAF7"></div>
+  <div class="value-inner">
+    <div class="section-label" data-i18n="value.label">02 — Waarom</div>
+    <h2 class="section-title display"><span data-i18n="value.title.a">Hoe creëert het</span> <em data-i18n="value.title.b">waarde</em> <span data-i18n="value.title.c">voor jouw organisatie?</span></h2>
+    <p style="max-width:60ch;font-size:17px;margin-top:8px" data-i18n="value.intro">Klik op een pijler om meer te lezen.</p>
+    <div class="value-grid" id="pillars"></div>
+  </div>
+</section>
+
+<!-- ============ APPROACH (4 STEPS) ============ -->
+<section class="approach" id="approach">
+  <div class="section-label" data-i18n="approach.label">03 — Onze aanpak</div>
+  <h2 class="section-title display"><span data-i18n="approach.title.a">Wij introduceren impactmanagement in</span> <em data-i18n="approach.title.b">vier stappen</em>.</h2>
+  <p style="max-width:60ch;font-size:17px;color:var(--ink-soft)" data-i18n="approach.intro">Een dynamische cyclus van meten, leren en bijsturen — geen lineair traject met een eindstreep. Klik op een stap voor een toelichting.</p>
+  <div class="approach-flow" id="steps"></div>
+</section>
+
+<!-- ============ THEORY OF CHANGE ============ -->
+<section class="toc" id="toc">
+  <div class="shape-deco toc-shapes-1" id="tocShapes1" style="color:#FAFAF7"></div>
+  <div class="shape-deco toc-shapes-2" id="tocShapes2" style="color:#FAFAF7"></div>
+  <div class="toc-inner">
+    <div class="section-label" data-i18n="toc.label">04 — Methodologie</div>
+    <h2 class="section-title display toc-section-title"><span data-i18n="toc.title.a">De</span> <em data-i18n="toc.title.b">Theory of Change</em>.</h2>
+    <p class="toc-intro" data-i18n="toc.intro">Een impactmodel beschrijft hoe je gewenste impact tot stand komt via een logische keten van resultaten. Klik op een niveau om te zien wat er bedoeld wordt — en hoe controle en invloed verschuiven.</p>
+
+    <div class="toc-model">
+      <div class="toc-pyramid" id="tocPyramid"></div>
+      <div class="toc-detail" id="tocDetail"></div>
+    </div>
+
+    <p style="max-width:60ch;font-size:15px;color:var(--ink);margin-top:32px;font-style:italic" data-i18n="toc.note">💡 We redeneren altijd <strong>terug</strong> — van impact naar activiteiten. Zo voorkom je dat je druk bent met dingen die niet bijdragen aan je doel.</p>
+  </div>
+</section>
+
+<!-- ============ INDICATORS ============ -->
+<section class="indicators" id="indicators">
+  <div class="section-label" data-i18n="ind.label">05 — Indicatoren</div>
+  <h2 class="section-title display"><span data-i18n="ind.title.a">Hoe maak je impact</span> <em data-i18n="ind.title.b">meetbaar</em><span data-i18n="ind.title.c">?</span></h2>
+  <p style="max-width:65ch;font-size:17px;color:var(--ink-soft)" data-i18n="ind.intro">Een indicator is een graadmeter die een indruk geeft van een situatie of ontwikkeling. Zonder goede indicatoren blijft je impactmodel een mooi verhaal — met indicatoren wordt het stuurbaar.</p>
+
+  <div class="ind-grid">
+    <div class="ind-text">
+      <p data-i18n="ind.p1"><strong>Kwantitatief en kwalitatief.</strong> Een goede meetset combineert beide. Kwantitatieve indicatoren (aantal, percentage) tonen schaal. Kwalitatieve indicatoren (tevredenheid, perceptie) tonen kwaliteit en diepte van het resultaat.</p>
+      <p data-i18n="ind.p2"><strong>Kwalitatieve data kwantificeren.</strong> Om kwalitatieve data vergelijkbaar te maken kun je classificatieschalen gebruiken — bijvoorbeeld een 1-tot-10-schaal voor tevredenheid of een 5-puntsschaal voor ervaren impact.</p>
+      <p data-i18n="ind.p3"><strong>De logica van het impactmodel als routekaart.</strong> Door indicatoren te koppelen aan elk niveau van het model — impact, outcomes, outputs, activiteiten — meet je gericht en samenhangend, in plaats van losse datapunten.</p>
+
+      <div class="ind-scales">
+        <div class="scale-row"><span data-i18n="ind.scale1.left">Zeer ontevreden</span><div class="scale-bar"></div><span data-i18n="ind.scale1.right">Zeer tevreden</span></div>
+        <div class="scale-row"><span data-i18n="ind.scale2.left">Weinig impact</span><div class="scale-bar alt"></div><span data-i18n="ind.scale2.right">Veel impact</span></div>
+      </div>
+    </div>
+
+    <div class="ind-criteria">
+      <h3 data-i18n="ind.crit.title">Een goede indicator is...</h3>
+      <div class="crit-row"><div class="crit-icon">M</div><div><h4 data-i18n="ind.crit.m.h">Meeteenheid</h4><p data-i18n="ind.crit.m.p">Wat wordt er gemeten? Aantal, percentage, niveau, score.</p></div></div>
+      <div class="crit-row"><div class="crit-icon">R</div><div><h4 data-i18n="ind.crit.r.h">Relevant</h4><p data-i18n="ind.crit.r.p">Vertelt iets betekenisvols over het resultaat in de Theory of Change.</p></div></div>
+      <div class="crit-row"><div class="crit-icon">C</div><div><h4 data-i18n="ind.crit.c.h">Concreet</h4><p data-i18n="ind.crit.c.p">Scherp geformuleerd, niet multi-interpretabel — voor alle stakeholders helder.</p></div></div>
+      <div class="crit-row"><div class="crit-icon">H</div><div><h4 data-i18n="ind.crit.h.h">Haalbaar</h4><p data-i18n="ind.crit.h.p">Praktisch te meten — je hebt de juiste middelen om de data op te halen.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AI APPLICATIONS ============ -->
+<section class="ai" id="ai">
+  <div class="shape-deco ai-shapes-1" id="aiShapes1" style="color:#FAFAF7"></div>
+  <div class="shape-deco ai-shapes-2" id="aiShapes2" style="color:#FAFAF7"></div>
+  <div class="ai-inner">
+    <div class="section-label" data-i18n="ai.label">06 — Innovatieve dataverzameling</div>
+    <h2 class="section-title display ai-section-title"><span data-i18n="ai.title.a">Slimme</span> <em data-i18n="ai.title.b">AI-toepassingen</em> <span data-i18n="ai.title.c">om data te verzamelen.</span></h2>
+    <p class="ai-intro" data-i18n="ai.intro">ADC heeft in diverse projecten big data gescraped en AI ingezet om beter zicht te krijgen op risico's, gedrag te monitoren en interventies te richten. Drie voorbeelden van toepassingen die laten zien hoe innovatieve dataverzameling impactgedreven werken kan versterken.</p>
+
+    <div class="ai-grid" id="aiGrid"></div>
+  </div>
+</section>
+
+<!-- ============ EXAMPLES (3 cases, full impact model) ============ -->
+<section class="examples" id="examples">
+  <div class="section-label" data-i18n="examples.label">07 — In de praktijk</div>
+  <h2 class="section-title display"><span data-i18n="examples.title.a">Drie</span> <em data-i18n="examples.title.b">impactmodellen</em> <span data-i18n="examples.title.c">uit de praktijk.</span></h2>
+  <p style="max-width:65ch;font-size:17px;color:var(--ink-soft)" data-i18n="examples.intro">Klik op een voorbeeld om het volledige impactmodel uit te klappen — van impact via outcomes en outputs tot activiteiten, inclusief onderliggende aannames.</p>
+  <div id="examplesContainer"></div>
+</section>
+
+<!-- ============ CONTACT (GREEN) ============ -->
+<section class="contact" id="contact">
+  <div class="shape-deco contact-shapes" id="contactShapes" style="color:#FAFAF7"></div>
+  <div class="contact-inner">
+    <div class="section-label" data-i18n="contact.label">08 — Aan de slag</div>
+    <div class="contact-grid">
+      <div>
+        <p class="contact-cta display" data-i18n="contact.cta">Klaar om je impact zichtbaar te maken? Wij denken graag mee.</p>
+        <p style="font-size:16px;max-width:55ch" data-i18n="contact.body">ADC is een datagedreven, multidisciplinaire consultancy met 150+ consultants in Amsterdam, Stockholm en Kopenhagen. We werken eind-tot-eind: van strategie tot dashboard, van Theory of Change tot governance.</p>
+        <a href="https://adc-consulting.com/contact/" target="_blank" rel="noopener" class="btn btn-dark contact-cta-btn"><span data-i18n="contact.btn">Plan een gesprek</span> <span class="arrow">→</span></a>
+      </div>
+      <div>
+        <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px" data-i18n="contact.team">Jouw aanspreekpunt</h4>
+        <div class="person">
+          <div class="person-name">Timon Domela</div>
+          <div class="person-role" data-i18n="contact.role">ADC — Public &amp; Society</div>
+          <a href="mailto:timon.d@adc-consulting.com">timon.d@adc-consulting.com</a>
+          <a href="https://adc-consulting.com/contact/" target="_blank" rel="noopener">adc-consulting.com/contact</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <svg viewBox="0 0 76 30" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M74.7535 19.3205L68.8386 17.5834C68.6602 17.5248 68.5014 17.603 68.4428 17.8424C67.6512 20.5959 65.8115 23.3127 61.9342 23.3127C57.5829 23.3127 54.9907 20.1976 54.9907 14.6492C54.9907 9.10078 57.5634 6.02728 61.8951 6.02728C65.2789 6.02728 67.3751 8.30187 67.9102 10.0194C67.9688 10.2002 68.1081 10.2784 68.2864 10.2198L74.1036 8.3434C74.2819 8.28232 74.3601 8.14306 74.3015 7.98426C72.8942 3.55236 68.5625 0 61.7363 0C57.3704 0 53.7398 1.56607 51.2502 4.28531C50.5539 5.04513 49.3543 5.04025 48.6385 4.29508C46.337 1.90078 42.9557 0.596132 38.6362 0.596132H26.7062C26.5792 0.596132 26.4643 0.686529 26.4253 0.803801V0.81113C26.4253 0.81113 26.4204 0.81846 26.4204 0.823346C26.413 0.847778 26.4106 0.872209 26.4106 0.896641V14.2901C26.4106 15.7144 24.417 16.0418 23.9601 14.6932L19.2888 0.838005C19.2301 0.657211 19.1104 0.598575 18.9516 0.598575H9.65294C9.49413 0.598575 9.37686 0.659654 9.31578 0.838005L0.0195405 28.4018C-0.0390955 28.6021 0.0390857 28.7414 0.256526 28.7414H7.12182C7.28063 28.7414 7.3979 28.6827 7.45898 28.5019L8.54619 24.7883C8.82226 23.8306 9.45504 23.4104 10.425 23.4104H18.1796C19.1495 23.4104 19.7823 23.8306 20.0584 24.7883L21.1651 28.5019C21.2238 28.6827 21.3435 28.7414 21.5023 28.7414H38.7925C40.7178 28.7414 42.4597 28.4433 44.0038 27.8863C45.7995 27.2608 47.3192 26.3055 48.5359 25.04C49.2517 24.2973 50.4489 24.2899 51.1476 25.0498C53.6397 27.7714 57.2677 29.3351 61.6337 29.3351C61.6679 29.3351 61.6996 29.3351 61.7338 29.3351C69.1537 29.3351 73.4855 24.8641 74.9685 19.6553C75.0076 19.4964 74.9294 19.3767 74.751 19.3157L74.7535 19.3205ZM15.9832 18.1845H12.6409C11.6514 18.1845 10.9796 17.4466 11.2361 16.4669L13.154 9.82152C13.4301 8.66346 15.1525 8.66346 15.4481 9.82152L17.366 16.4669C17.6225 17.4442 16.9702 18.1845 15.9807 18.1845H15.9832ZM35.4332 22.653C34.4046 22.653 33.6326 21.8736 33.6326 20.8377V8.48266C33.6326 8.23835 33.6741 8.01113 33.7523 7.80591C34.0088 7.13159 34.6441 6.68694 35.4308 6.68694H38.2208C42.3351 6.68694 44.5511 9.52101 44.5511 14.6297C44.5511 15.7682 44.4411 16.7968 44.2261 17.708C44.2188 17.7398 44.2115 17.7691 44.2042 17.7984C44.1797 17.8986 44.1528 17.9963 44.126 18.0941C43.3002 21.0405 41.2895 22.6506 38.2184 22.6506H35.4283L35.4332 22.653Z"/>
+      </svg>
+      <span class="sub">Data &amp; AI Consultancy</span>
+      <p style="font-size:13px;color:rgba(250,250,247,.7);max-width:32ch;margin-top:16px" data-i18n="footer.tag">Where it all adds up. End-to-end data &amp; AI-oplossingen — bridging data, processes and people.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Amsterdam</h5>
+      <p>De Ruijterkade 7</p>
+      <p>1013 AA Amsterdam</p>
+      <p>The Netherlands</p>
+    </div>
+    <div class="footer-col">
+      <h5>Stockholm</h5>
+      <p>Götgatan 22A</p>
+      <p>118 46 Stockholm</p>
+      <p>Sweden</p>
+    </div>
+    <div class="footer-col">
+      <h5>Copenhagen</h5>
+      <p>Overgaden Oven Vandet 58A</p>
+      <p>1415 Copenhagen</p>
+      <p>Denmark</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2024 ADC Consulting · Datagedreven impact management</div>
+</footer>
+
+<script>
+// ============ DATA ============
+const DATA = {
+  pillars: [
+    {
+      num:'01',
+      title: {nl:'Impact meten en demonstreren', en:'Measuring and demonstrating impact'},
+      short: {nl:'Maak abstracte impact tastbaar — kwantificeer de effecten van je werk.', en:'Turn abstract impact into measurable outcomes — quantify the effects of your work.'},
+      detail:{nl:'Door tastbaar bewijs van resultaten te leveren, valideer je investeringen en bouw je vertrouwen op bij stakeholders. Het maakt het abstracte concept "impact" concreet en versterkt de geloofwaardigheid van je organisatie.', en:'By providing tangible evidence of results, you validate investments and foster trust among stakeholders. This turns the abstract concept of "impact" into measurable outcomes, reinforcing your organisation\'s credibility.'}
+    },
+    {
+      num:'02',
+      title:{nl:'Strategische besluitvorming verbeteren', en:'Improving strategic decision-making'},
+      short:{nl:'Beslissingen op basis van data en bewijs zijn vaak robuuster en effectiever.', en:'Decisions grounded in data and evidence are often more robust and effective.'},
+      detail:{nl:'Door impactdata te analyseren identificeer je wat werkt, wat niet werkt en hoe je middelen het meest effectief inzet. Dit leidt tot beter geïnformeerde, strategische besluitvorming.', en:'By analysing impact data, you can identify what works, what does not, and how to allocate resources most effectively, leading to more informed, strategic decision-making.'}
+    },
+    {
+      num:'03',
+      title:{nl:'Focus en samenhang versterken', en:'Strengthening focus and alignment'},
+      short:{nl:'Eén gedeelde visie over alle afdelingen heen — minder fragmentatie, meer synergie.', en:'A unified vision across all departments — less fragmentation, more synergy.'},
+      detail:{nl:'Het zorgt voor een gedeelde focus, vermindert het risico op verkokerd werken en zorgt dat alle delen van de organisatie synergetisch samenwerken aan dezelfde impactdoelen.', en:'It allows for a shared focus, reducing the risk of siloed and fragmented working, and ensuring that all parts of the organisation are working synergistically towards the same impact goals.'}
+    },
+    {
+      num:'04',
+      title:{nl:'Stakeholders betrekken', en:'Engaging stakeholders'},
+      short:{nl:'Een evidenced impact-model is een krachtig communicatiemiddel.', en:'An impact model with evidenced results is a powerful communication tool.'},
+      detail:{nl:'Door je impact helder te articuleren betrek je interne én externe stakeholders, vergroot je het begrip van wat je organisatie doet en bouw je sterkere relaties met klanten, investeerders en de samenleving.', en:'By clearly articulating your organisation\'s impact, you can engage both internal and external stakeholders, fostering a deeper understanding of the organisation\'s purpose and what it achieves.'}
+    }
+  ],
+
+  steps: [
+    {
+      num:'01',
+      title:{nl:'Bouw je impactmodel', en:'Build your impact model'},
+      desc:{nl:'Beschrijf en visualiseer hoe gewenste impact ontstaat via een logische keten van resultaten — van activiteiten via outputs en outcomes tot impact. Dit is de basis voor alles wat volgt.', en:'Describe and visualise how desired impact is achieved through a logical sequence of results — from activities via outputs and outcomes to impact. This is the foundation for everything that follows.'},
+      bullets:{nl:['Visie en impactstellingen scherp formuleren','Causale keten in kaart brengen','Onderliggende aannames expliciet maken','Afbakenen wat onder controle, invloed en belang valt'],en:['Sharp formulation of vision and impact statements','Mapping the causal chain','Making underlying assumptions explicit','Distinguishing control, influence and interest']}
+    },
+    {
+      num:'02',
+      title:{nl:'Definieer het meetkader', en:'Define the measurement framework'},
+      desc:{nl:'Op basis van de logica van het impactmodel formuleren we gerichte indicatoren — kwantitatief én kwalitatief, scherp en haalbaar. Geen losse datapunten, maar een samenhangend meetkader.', en:'Based on the logic of the impact model, we define targeted indicators — quantitative and qualitative, sharp and feasible. No scattered data points, but a coherent framework.'},
+      bullets:{nl:['Indicatoren per niveau (impact → activiteit)','Combinatie kwantitatief/kwalitatief','SMART-toets per indicator','Meetplan per indicator: bron, frequentie, actie'],en:['Indicators per level (impact → activity)','Quantitative + qualitative mix','SMART check per indicator','Measurement plan: source, frequency, action']}
+    },
+    {
+      num:'03',
+      title:{nl:'Tools & processen inrichten', en:'Set up tools and processes'},
+      desc:{nl:'Automatisering van data, dashboards, governance en de juiste skills bij teams — zodat data ook echt landt in besluitvorming. Inclusief inzet van slimme AI-toepassingen voor dataverzameling.', en:'Automation of data, dashboards, governance and team skills — so data actually lands in decision-making. Including smart AI tools for data collection.'},
+      bullets:{nl:['(Realtime) dashboards en data-pipelines','Data governance en bronkeuze','Skills & capacity bij teams','AI/ML voor monitoring waar relevant'],en:['(Realtime) dashboards and data pipelines','Data governance and source selection','Skills & capacity in teams','AI/ML for monitoring where relevant']}
+    },
+    {
+      num:'04',
+      title:{nl:'Meten, leren, bijsturen', en:'Measure, learn, adjust'},
+      desc:{nl:'Een continue cyclus van meten, leren en aanpassen — indicatoren tweaken, methoden herzien, of zelfs strategische doelen heroverwegen. Geen eenmalige exercitie, maar een manier van werken.', en:'A continuous cycle of measuring, learning and adjusting — tweaking indicators, revising methods, or even rethinking strategic goals. Not a one-off exercise, but a way of working.'},
+      bullets:{nl:['Periodieke evaluatie & herijking','Aannames toetsen tegen de praktijk','Strategische bijsturing op basis van data','Continue verbetering van het meetkader'],en:['Periodic evaluation & recalibration','Test assumptions against practice','Strategic adjustment based on data','Continuous improvement of the framework']}
+    }
+  ],
+
+  toc: [
+    {
+      lvl:'1', cls:'toc-level-1',
+      name:{nl:'Impact', en:'Impact'},
+      scope:{nl:'belang · geen directe controle', en:'interest · no direct control'},
+      h:{nl:'Impact', en:'Impact'},
+      desc:{nl:'De maatschappelijke verandering die je wilt zien. Het gaat niet over jouw team — het gaat over de wereld waarin je werkt. Wees ambitieus, maar realistisch.', en:'The societal change you want to see. It\'s not about your team — it\'s about the world you operate in. Be ambitious, but realistic.'},
+      example:{nl:'In 2030 sporten evenveel kinderen uit huishoudens onder de armoedegrens als kinderen uit huishoudens daarboven.', en:'By 2030, children from households below the poverty line participate in sports as much as children from households above it.'}
+    },
+    {
+      lvl:'2', cls:'toc-level-2',
+      name:{nl:'Outcomes', en:'Outcomes'},
+      scope:{nl:'invloed', en:'influence'},
+      h:{nl:'Outcomes', en:'Outcomes'},
+      desc:{nl:'De gedragsveranderingen of toestanden die nodig zijn om de impact te realiseren. Vaak zijn meerdere outcomes nodig om één impact te bereiken.', en:'The behavioural changes or conditions required to realise the impact. Often, multiple outcomes are needed to achieve one impact.'},
+      example:{nl:'Kinderen uit huishoudens onder de armoedegrens zijn lid van lokale sportclubs.', en:'Children from low-income households are members of local sports clubs.'}
+    },
+    {
+      lvl:'3', cls:'toc-level-3',
+      name:{nl:'Outputs', en:'Outputs'},
+      scope:{nl:'controle', en:'control'},
+      h:{nl:'Outputs', en:'Outputs'},
+      desc:{nl:'De directe resultaten van je activiteiten. Wat lever je op? Meerdere outputs kunnen nodig zijn voor één outcome.', en:'The direct results of your activities. What do you deliver? Multiple outputs may be needed for one outcome.'},
+      example:{nl:'Financiële regelingen voor deelname aan lokale sportclubs zijn ingericht en toegankelijk.', en:'Financial schemes for participation in local sports clubs are set up and accessible.'}
+    },
+    {
+      lvl:'4', cls:'toc-level-4',
+      name:{nl:'Activiteiten', en:'Activities'},
+      scope:{nl:'controle', en:'control'},
+      h:{nl:'Activiteiten', en:'Activities'},
+      desc:{nl:'Het werk dat je daadwerkelijk doet om de outputs te leveren. Concrete acties, programma\'s en interventies.', en:'The work you actually do to deliver the outputs. Concrete actions, programmes and interventions.'},
+      example:{nl:'We bieden een sport-toeslag voor kinderen uit huishoudens onder de armoedegrens.', en:'We offer a sports allowance for children from low-income households.'}
+    }
+  ],
+
+  ai: [
+    {
+      tag:{nl:'Verzekeraar',en:'Insurance'},
+      title:{nl:'Risicomodel op basis van historische claims + externe ESG-data',en:'Risk model based on historical claims + external ESG data'},
+      input:{nl:'Historische claimsdata, portefeuilledata, externe databronnen zoals overstromingsrisico\'s en energielabels.',en:'Historical claims data, portfolio data, external sources such as flood risk and energy labels.'},
+      model:{nl:'Model dat claimkans en risicoprofielen voorspelt.',en:'Model that predicts claim probability and risk profiles.'},
+      value:{nl:'Betere segmentatie, gerichtere pricing/interventies, beter begrip van risicoprofielen.',en:'Better segmentation, more targeted pricing/interventions, deeper understanding of risk profiles.'},
+      relevance:{nl:'Toont hoe interne en externe databronnen gecombineerd kunnen worden om marktpartijen of situaties in risicobuckets in te delen.',en:'Shows how internal and external data sources can be combined to bucket market actors or situations by risk.'}
+    },
+    {
+      tag:{nl:'Duurzaamheid · Mode',en:'Sustainability · Fashion'},
+      title:{nl:'Crawling, scraping en NLP voor duurzaamheidsratings van fashion brands',en:'Crawling, scraping and NLP for sustainability ratings of fashion brands'},
+      input:{nl:'Webdata via crawling/scraping, bestaande labels van initiatieven, tekstuele informatie over merken.',en:'Web data via crawling/scraping, existing initiative labels, textual brand information.'},
+      model:{nl:'Supervised text classification om ratings te voorspellen voor niet-gelabelde merken.',en:'Supervised text classification to predict ratings for unlabelled brands.'},
+      value:{nl:'Schaalbare marktmonitoring op basis van publieke online informatie.',en:'Scalable market monitoring based on public online information.'},
+      relevance:{nl:'Zeer vergelijkbaar met toezicht in de digitale economie, waar online publieke data kan worden gebruikt om gedrag, claims of risico\'s op platformen/markten systematisch te monitoren.',en:'Highly comparable to oversight in the digital economy, where public online data can be used to systematically monitor behaviour, claims or risks on platforms/markets.'}
+    },
+    {
+      tag:{nl:'Payment Service Provider',en:'Payment Service Provider'},
+      title:{nl:'Transaction monitoring bij payment service provider',en:'Transaction monitoring at a payment service provider'},
+      input:{nl:'Grote volumes transactiedata, klantsegmentatie, detectieregels, operationele afhandeldata.',en:'Large volumes of transaction data, customer segmentation, detection rules, operational handling data.'},
+      model:{nl:'Detectiemodellen voor verdachte transacties en herontwerp van risico-segmentatie.',en:'Detection models for suspicious transactions and redesign of risk segmentation.'},
+      value:{nl:'Minder false positives, efficiëntere opvolging, gerichtere inzet van capaciteit.',en:'Fewer false positives, more efficient follow-up, more targeted capacity allocation.'},
+      relevance:{nl:'Laat zien hoe datagedreven signalering kan helpen om toezichtcapaciteit te richten op de hoogste risico\'s in digitale markten.',en:'Demonstrates how data-driven signalling can help direct oversight capacity to the highest risks in digital markets.'}
+    }
+  ],
+
+  examples: [
+    {
+      tag:{nl:'Onderwijs',en:'Education'},
+      title:{nl:'Digitale geletterdheid',en:'Digital literacy'},
+      vision:{nl:'Een digitaal vaardige samenleving waarin iedereen kan meedoen.',en:'A digitally skilled society in which everyone can participate.'},
+      impact:{nl:'Inwoners beschikken over digitale basisvaardigheden om gebruik te maken van digitale overheidsdiensten en dagelijkse digitale toepassingen.',en:'Residents have basic digital skills to use government services and daily digital applications.'},
+      outcomes:[
+        {nl:'Inwoners met basisvaardigheden-achterstand doen nieuwe digitale vaardigheden op tijdens onze programma\'s.',en:'Residents with skill gaps acquire new digital skills during our programmes.'}
+      ],
+      outputs:[
+        {nl:'We bereiken alle inwoners met basisvaardigheden-achterstand.',en:'We reach all residents with basic skill gaps.'}
+      ],
+      activities:[
+        {nl:'We ontwikkelen wijkvestigingen tot volwaardige bibliotheekvoorzieningen.',en:'We develop neighbourhood branches into full library facilities.'}
+      ],
+      assumption:{nl:'Via de huidige kanalen bereiken we niet de gehele doelgroep. Daarom moeten we meer zichtbaar zijn in de wijk.',en:'Our current channels don\'t reach the full target group. We need stronger neighbourhood visibility.'}
+    },
+    {
+      tag:{nl:'Werk & inkomen',en:'Work & income'},
+      title:{nl:'Re-integratie',en:'Re-integration'},
+      vision:{nl:'Een inclusieve arbeidsmarkt waarin iedereen naar vermogen meedoet.',en:'An inclusive labour market where everyone participates to their ability.'},
+      impact:{nl:'Inwoners met een bijstandsuitkering participeren naar vermogen.',en:'Welfare recipients participate to the best of their ability.'},
+      outcomes:[
+        {nl:'Inwoners die binnen 3 jaar aan het werk kunnen, maken gebruik van een passende re-integratie-regeling.',en:'Residents able to work within 3 years use a suitable re-integration scheme.'}
+      ],
+      outputs:[
+        {nl:'Er is inzicht in de behoefte aan integratievoorzieningen van inwoners met een bijstandsuitkering.',en:'There is insight into the need for integration services among welfare recipients.'},
+        {nl:'Er is een passend scholingsaanbod beschikbaar.',en:'A suitable training offer is available.'},
+        {nl:'Inwoners zijn door consulenten doorverwezen naar passende voorzieningen.',en:'Residents have been referred by case workers to suitable services.'},
+        {nl:'Consulenten informeren over beschikbare regelingen.',en:'Case workers inform about available schemes.'}
+      ],
+      activities:[
+        {nl:'Onderzoek naar integratiebehoefte van inwoners met een bijstandsuitkering.',en:'Research into the integration needs of welfare recipients.'}
+      ],
+      assumption:{nl:'Werkgevers uit de regio bieden passende banen aan; consulenten weten hoe ze de juiste diagnose stellen.',en:'Regional employers offer suitable jobs; case workers can make accurate diagnoses.'}
+    },
+    {
+      tag:{nl:'Sport & gezondheid',en:'Sport & health'},
+      title:{nl:'Sport voor alle kinderen',en:'Sport for every child'},
+      vision:{nl:'Een gezonde generatie waarin afkomst geen barrière is voor bewegen.',en:'A healthy generation in which background is no barrier to exercise.'},
+      impact:{nl:'In 2030 sporten evenveel kinderen uit huishoudens onder de armoedegrens als kinderen uit huishoudens daarboven.',en:'By 2030, children below and above the poverty line participate in sports equally.'},
+      outcomes:[
+        {nl:'Kinderen uit huishoudens onder de armoedegrens zijn lid van lokale sportclubs.',en:'Children from low-income households are members of local sports clubs.'},
+        {nl:'Leerlingen uit huishoudens onder de armoedegrens maken via school gebruik van hoogwaardige sportfaciliteiten.',en:'Pupils from low-income households use high-quality sports facilities through school.'}
+      ],
+      outputs:[
+        {nl:'Financiële regelingen voor deelname aan lokale sportclubs zijn ingericht en toegankelijk.',en:'Financial schemes for participation in local sports clubs are set up and accessible.'},
+        {nl:'Alle scholen bieden laagdrempelig hoogwaardige sportfaciliteiten aan.',en:'All schools offer accessible high-quality sports facilities.'}
+      ],
+      activities:[
+        {nl:'We bieden een sport-toeslag voor kinderen uit huishoudens onder de armoedegrens.',en:'We offer a sports allowance for children from low-income households.'},
+        {nl:'We zetten samenwerkingsverbanden op tussen sportclubs en scholen.',en:'We set up partnerships between sports clubs and schools.'},
+        {nl:'We maken subsidies beschikbaar voor sportfaciliteiten op scholen.',en:'We make subsidies available for school sports facilities.'}
+      ],
+      assumption:{nl:'Financiële barrières zijn een belangrijke reden voor kinderen uit huishoudens onder de armoedegrens om geen lid te worden van een lokale sportclub.',en:'Financial barriers are a key reason children from low-income households don\'t join local sports clubs.'}
+    }
+  ]
+};
+
+const I18N = {
+  nl: {
+    'nav.what':'Wat is het?','nav.value':'Waarde','nav.approach':'Aanpak','nav.toc':'Methodologie','nav.indicators':'Indicatoren','nav.ai':'AI & data','nav.examples':'Voorbeelden','nav.contact':'Contact',
+    'hero.tag':'Datagedreven Impact Management',
+    'hero.h1.a':'Maak je','hero.h1.b':'impact','hero.h1.c':'meetbaar, zichtbaar en stuurbaar.',
+    'hero.sub':'Van evaluatie achteraf naar dynamisch impact monitoren, evalueren en bijsturen. Gebruik data en AI voor concrete maatschappelijke impact.',
+    'hero.cta1':'Ontdek de aanpak','hero.cta2':'Plan een gesprek',
+    'what.label':'01 — Wat is het',
+    'what.title.a':'Wat is','what.title.b':'datagedreven impact management','what.title.c':'?',
+    'what.p1':'Steeds meer organisaties willen data gebruiken om inzicht te krijgen in de impact van hun werk. Met datagedreven impact management kan een organisatie beter beoordelen welk werk er nodig is om een beoogde maatschappelijke impact te bereiken, hoe effectief ze werkt, en kan ze communiceren over behaalde resultaten.',
+    'what.p2':'Hier geldt het bekende gezegde <strong>"meten is weten"</strong>. Door de beoogde en gerealiseerde impact te specificeren en te kwantificeren kan een organisatie haar strategieën en activiteiten beter inrichten.',
+    'what.p3':'Klassieke beleidsanalyse en -evaluatie zijn gericht op het achteraf afleggen van verantwoording. Dit is belangrijk maar is vaak minder goed bruikbaar voor besluitvorming over <strong>lopende of toekomstige activiteiten</strong>.',
+    'what.quote':'Meten is weten.','what.cite':'— Nederlands gezegde',
+    'value.label':'02 — Waarom',
+    'value.title.a':'Hoe creëert het','value.title.b':'waarde','value.title.c':'voor jouw organisatie?',
+    'value.intro':'Klik op een pijler om meer te lezen.',
+    'approach.label':'03 — Onze aanpak',
+    'approach.title.a':'Wij introduceren impactmanagement in','approach.title.b':'vier stappen.',
+    'approach.intro':'Een dynamische cyclus van meten, leren en bijsturen — geen lineair traject met een eindstreep. Klik op een stap voor een toelichting.',
+    'toc.label':'04 — Methodologie',
+    'toc.title.a':'De','toc.title.b':'Theory of Change.',
+    'toc.intro':'Een impactmodel beschrijft hoe je gewenste impact tot stand komt via een logische keten van resultaten. Klik op een niveau om te zien wat er bedoeld wordt — en hoe controle en invloed verschuiven.',
+    'toc.note':'💡 We redeneren altijd <strong>terug</strong> — van impact naar activiteiten. Zo voorkom je dat je druk bent met dingen die niet bijdragen aan je doel.',
+    'ind.label':'05 — Indicatoren',
+    'ind.title.a':'Hoe maak je impact','ind.title.b':'meetbaar','ind.title.c':'?',
+    'ind.intro':'Een indicator is een graadmeter die een indruk geeft van een situatie of ontwikkeling. Zonder goede indicatoren blijft je impactmodel een mooi verhaal — met indicatoren wordt het stuurbaar.',
+    'ind.p1':'<strong>Kwantitatief en kwalitatief.</strong> Een goede meetset combineert beide. Kwantitatieve indicatoren (aantal, percentage) tonen schaal. Kwalitatieve indicatoren (tevredenheid, perceptie) tonen kwaliteit en diepte van het resultaat.',
+    'ind.p2':'<strong>Kwalitatieve data kwantificeren.</strong> Om kwalitatieve data vergelijkbaar te maken kun je classificatieschalen gebruiken — bijvoorbeeld een 1-tot-10-schaal voor tevredenheid of een 5-puntsschaal voor ervaren impact.',
+    'ind.p3':'<strong>De logica van het impactmodel als routekaart.</strong> Door indicatoren te koppelen aan elk niveau van het model — impact, outcomes, outputs, activiteiten — meet je gericht en samenhangend, in plaats van losse datapunten.',
+    'ind.scale1.left':'Zeer ontevreden','ind.scale1.right':'Zeer tevreden',
+    'ind.scale2.left':'Weinig impact','ind.scale2.right':'Veel impact',
+    'ind.crit.title':'Een goede indicator is...',
+    'ind.crit.m.h':'Meeteenheid','ind.crit.m.p':'Wat wordt er gemeten? Aantal, percentage, niveau, score.',
+    'ind.crit.r.h':'Relevant','ind.crit.r.p':'Vertelt iets betekenisvols over het resultaat in de Theory of Change.',
+    'ind.crit.c.h':'Concreet','ind.crit.c.p':'Scherp geformuleerd, niet multi-interpretabel — voor alle stakeholders helder.',
+    'ind.crit.h.h':'Haalbaar','ind.crit.h.p':'Praktisch te meten — je hebt de juiste middelen om de data op te halen.',
+    'ai.label':'06 — Innovatieve dataverzameling',
+    'ai.title.a':'Slimme','ai.title.b':'AI-toepassingen','ai.title.c':'om data te verzamelen.',
+    'ai.intro':'ADC heeft in diverse projecten big data gescraped en AI ingezet om beter zicht te krijgen op risico\'s, gedrag te monitoren en interventies te richten. Drie voorbeelden van toepassingen die laten zien hoe innovatieve dataverzameling impactgedreven werken kan versterken.',
+    'ai.row.input':'Big data input','ai.row.model':'Analyse model','ai.row.value':'Waarde','ai.row.relevance':'Relevantie',
+    'examples.label':'07 — In de praktijk',
+    'examples.title.a':'Drie','examples.title.b':'impactmodellen','examples.title.c':'uit de praktijk.',
+    'examples.intro':'Klik op een voorbeeld om het volledige impactmodel uit te klappen — van impact via outcomes en outputs tot activiteiten, inclusief onderliggende aannames.',
+    'examples.label.vision':'Visie','examples.label.impact':'Impact','examples.label.outcomes':'Outcomes','examples.label.outputs':'Outputs','examples.label.activities':'Activiteiten','examples.label.assumption':'Aanname',
+    'contact.label':'08 — Aan de slag',
+    'contact.cta':'Klaar om je impact zichtbaar te maken? Wij denken graag mee.',
+    'contact.body':'ADC is een datagedreven, multidisciplinaire consultancy met 150+ consultants in Amsterdam, Stockholm en Kopenhagen. We werken eind-tot-eind: van strategie tot dashboard, van Theory of Change tot governance.',
+    'contact.btn':'Plan een gesprek',
+    'contact.team':'Jouw aanspreekpunt','contact.role':'ADC — Public & Society',
+    'footer.tag':'Where it all adds up. End-to-end data & AI-oplossingen — bridging data, processes and people.'
+  },
+  en: {
+    'nav.what':'What it is','nav.value':'Value','nav.approach':'Approach','nav.toc':'Methodology','nav.indicators':'Indicators','nav.ai':'AI & data','nav.examples':'Examples','nav.contact':'Contact',
+    'hero.tag':'Data-driven Impact Management',
+    'hero.h1.a':'Make your','hero.h1.b':'impact','hero.h1.c':'measurable, visible and actionable.',
+    'hero.sub':'From retrospective evaluation to dynamic impact monitoring, evaluation and adjustment. Use data and AI for concrete societal impact.',
+    'hero.cta1':'Explore the approach','hero.cta2':'Schedule a conversation',
+    'what.label':'01 — What it is',
+    'what.title.a':'What is','what.title.b':'data-driven impact management','what.title.c':'?',
+    'what.p1':'More and more organisations want to use data to understand the impact of their work. With data-driven impact management, an organisation can better assess what work is needed to achieve a desired societal impact, how effectively it is working, and can communicate about the results achieved.',
+    'what.p2':'The well-known saying applies here: <strong>"to measure is to know"</strong>. By specifying and quantifying intended and realised impact, an organisation can better shape its strategies and activities.',
+    'what.p3':'Classical policy analysis and evaluation are aimed at retrospective accountability. This is important but is often less useful for decision-making about <strong>ongoing or future activities</strong>.',
+    'what.quote':'To measure is to know.','what.cite':'— Dutch saying',
+    'value.label':'02 — Why',
+    'value.title.a':'How does it create','value.title.b':'value','value.title.c':'for your organisation?',
+    'value.intro':'Click any pillar to read more.',
+    'approach.label':'03 — Our approach',
+    'approach.title.a':'We introduce impact management in','approach.title.b':'four steps.',
+    'approach.intro':'A dynamic cycle of measuring, learning and adjusting — not a linear project with a finish line. Click on a step for more detail.',
+    'toc.label':'04 — Methodology',
+    'toc.title.a':'The','toc.title.b':'Theory of Change.',
+    'toc.intro':'An impact model describes how desired impact is achieved through a logical sequence of results. Click any level to see what it means — and how control and influence shift.',
+    'toc.note':'💡 We always reason <strong>backwards</strong> — from impact to activities. This prevents being busy with things that don\'t actually contribute to your goal.',
+    'ind.label':'05 — Indicators',
+    'ind.title.a':'How do you make impact','ind.title.b':'measurable','ind.title.c':'?',
+    'ind.intro':'An indicator is a gauge that gives an impression of a situation or development. Without good indicators, your impact model remains a nice story — with indicators, it becomes actionable.',
+    'ind.p1':'<strong>Quantitative and qualitative.</strong> A good measurement set combines both. Quantitative indicators (number, percentage) show scale. Qualitative indicators (satisfaction, perception) show quality and depth of the result.',
+    'ind.p2':'<strong>Quantify qualitative data.</strong> To make qualitative data comparable, use classification scales — for example a 1-to-10 scale for satisfaction or a 5-point scale for perceived impact.',
+    'ind.p3':'<strong>The logic of the impact model as a roadmap.</strong> By linking indicators to each level of the model — impact, outcomes, outputs, activities — you measure in a targeted and coherent way, instead of scattered data points.',
+    'ind.scale1.left':'Very dissatisfied','ind.scale1.right':'Very satisfied',
+    'ind.scale2.left':'Low impact','ind.scale2.right':'High impact',
+    'ind.crit.title':'A good indicator is...',
+    'ind.crit.m.h':'Measurable','ind.crit.m.p':'What is being measured? Number, percentage, level, score.',
+    'ind.crit.r.h':'Relevant','ind.crit.r.p':'Says something meaningful about the result in the Theory of Change.',
+    'ind.crit.c.h':'Concrete','ind.crit.c.p':'Sharply formulated, not open to interpretation — clear to all stakeholders.',
+    'ind.crit.h.h':'Feasible','ind.crit.h.p':'Practical to measure — you have the means to gather the data.',
+    'ai.label':'06 — Innovative data collection',
+    'ai.title.a':'Smart','ai.title.b':'AI applications','ai.title.c':'to gather data.',
+    'ai.intro':'ADC has scraped big data and deployed AI in various projects to gain better insight into risks, monitor behaviour and target interventions. Three examples that show how innovative data collection can strengthen impact-driven work.',
+    'ai.row.input':'Big data input','ai.row.model':'Analytical model','ai.row.value':'Value','ai.row.relevance':'Relevance',
+    'examples.label':'07 — In practice',
+    'examples.title.a':'Three','examples.title.b':'impact models','examples.title.c':'from practice.',
+    'examples.intro':'Click an example to expand the full impact model — from impact via outcomes and outputs to activities, including underlying assumptions.',
+    'examples.label.vision':'Vision','examples.label.impact':'Impact','examples.label.outcomes':'Outcomes','examples.label.outputs':'Outputs','examples.label.activities':'Activities','examples.label.assumption':'Assumption',
+    'contact.label':'08 — Get started',
+    'contact.cta':'Ready to make your impact visible? Let\'s talk.',
+    'contact.body':'ADC is a data-driven, multidisciplinary consultancy with 150+ consultants in Amsterdam, Stockholm and Copenhagen. We deliver end-to-end: from strategy to dashboard, from Theory of Change to governance.',
+    'contact.btn':'Schedule a conversation',
+    'contact.team':'Your point of contact','contact.role':'ADC — Public & Society',
+    'footer.tag':'Where it all adds up. End-to-end data & AI solutions — bridging data, processes and people.'
+  }
+};
+
+let currentLang = 'nl';
+
+// ============ HELPERS ============
+function pickLang(field){
+  if (typeof field === 'string') return field;
+  return field[currentLang] || field.nl;
+}
+
+// ============ ADC GEOMETRIC SHAPE COMPOSITION ============
+// Generate a "scattered geometric shapes" SVG for backgrounds
+function makeShapeComposition(seed, density){
+  // density = number of shapes
+  const shapes = ['plus','diamond','pill','bone','dot','x','rsquare'];
+  // pseudo-random based on seed
+  let s = seed;
+  const rand = () => { s = (s*9301 + 49297) % 233280; return s/233280; };
+
+  let svg = '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">';
+  for (let i=0;i<density;i++){
+    const shape = shapes[Math.floor(rand()*shapes.length)];
+    const x = rand()*380;
+    const y = rand()*380;
+    const size = 14 + rand()*60;
+    const rot = Math.floor(rand()*360);
+    svg += `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot}) scale(${(size/100).toFixed(2)})"><use href="#adc-${shape}" /></g>`;
+  }
+  svg += '</svg>';
+  return svg;
+}
+
+function injectShapes(){
+  document.getElementById('heroShapes1').innerHTML = makeShapeComposition(7, 18);
+  document.getElementById('heroShapes2').innerHTML = makeShapeComposition(42, 14);
+  document.getElementById('valueShapes').innerHTML = makeShapeComposition(123, 12);
+  document.getElementById('tocShapes1').innerHTML = makeShapeComposition(88, 10);
+  document.getElementById('tocShapes2').innerHTML = makeShapeComposition(311, 9);
+  document.getElementById('aiShapes1').innerHTML = makeShapeComposition(555, 14);
+  document.getElementById('aiShapes2').innerHTML = makeShapeComposition(777, 8);
+  document.getElementById('contactShapes').innerHTML = makeShapeComposition(999, 16);
+}
+
+// ============ RENDER ============
+function renderPillars(){
+  const root = document.getElementById('pillars');
+  root.innerHTML = DATA.pillars.map((p,i)=>`
+    <div class="pillar" data-idx="${i}">
+      <div class="pillar-num">${p.num}</div>
+      <div class="pillar-title">${pickLang(p.title)}</div>
+      <div class="pillar-short">${pickLang(p.short)}</div>
+      <div class="pillar-detail">${pickLang(p.detail)}</div>
+      <div class="pillar-expand"><span class="pl-toggle">${currentLang==='nl'?'Lees meer':'Read more'}</span> <span>+</span></div>
+    </div>
+  `).join('');
+  root.querySelectorAll('.pillar').forEach(el=>{
+    el.addEventListener('click',()=>el.classList.toggle('active'));
+  });
+}
+
+function renderSteps(){
+  const root = document.getElementById('steps');
+  root.innerHTML = DATA.steps.map((s,i)=>`
+    <div class="step" data-idx="${i}">
+      <div class="step-num">${s.num}</div>
+      <h3>${pickLang(s.title)}</h3>
+      <p>${pickLang(s.desc)}</p>
+      <ul>
+        ${pickLang(s.bullets).map(b=>`<li>${b}</li>`).join('')}
+      </ul>
+      <div class="arrow-between">→</div>
+    </div>
+  `).join('');
+  root.querySelectorAll('.step').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const wasActive = el.classList.contains('active');
+      root.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+      if(!wasActive) el.classList.add('active');
+    });
+  });
+}
+
+function renderToc(){
+  const py = document.getElementById('tocPyramid');
+  py.innerHTML = DATA.toc.map((l,i)=>`
+    <div class="toc-level ${l.cls} ${i===0?'active':''}" data-idx="${i}">
+      <div class="lvl-icon">${l.lvl}</div>
+      <div class="toc-level-text">
+        <div class="lvl-name">${pickLang(l.name)}</div>
+        <div class="lvl-scope">${pickLang(l.scope)}</div>
+      </div>
+    </div>
+  `).join('');
+  py.querySelectorAll('.toc-level').forEach(el=>{
+    el.addEventListener('click',()=>{
+      py.querySelectorAll('.toc-level').forEach(s=>s.classList.remove('active'));
+      el.classList.add('active');
+      renderTocDetail(parseInt(el.dataset.idx));
+    });
+  });
+  renderTocDetail(0);
+}
+function renderTocDetail(idx){
+  const l = DATA.toc[idx];
+  const detail = document.getElementById('tocDetail');
+  detail.innerHTML = `
+    <h3>${pickLang(l.h)}</h3>
+    <p style="font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:18px">${pickLang(l.scope)}</p>
+    <p>${pickLang(l.desc)}</p>
+    <div class="example">
+      <strong>${currentLang==='nl'?'Voorbeeld':'Example'}</strong>
+      ${pickLang(l.example)}
+    </div>
+  `;
+}
+
+function renderAi(){
+  const root = document.getElementById('aiGrid');
+  const t = I18N[currentLang];
+  root.innerHTML = DATA.ai.map(a=>`
+    <div class="ai-card">
+      <div class="ai-card-header">
+        <div class="ai-tag">${pickLang(a.tag)}</div>
+        <h3>${pickLang(a.title)}</h3>
+      </div>
+      <div class="ai-card-body">
+        <div class="ai-row"><div class="label">${t['ai.row.input']}</div><div class="content">${pickLang(a.input)}</div></div>
+        <div class="ai-row"><div class="label">${t['ai.row.model']}</div><div class="content">${pickLang(a.model)}</div></div>
+        <div class="ai-row"><div class="label">${t['ai.row.value']}</div><div class="content">${pickLang(a.value)}</div></div>
+        <div class="ai-row"><div class="label">${t['ai.row.relevance']}</div><div class="content">${pickLang(a.relevance)}</div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderExamples(){
+  const root = document.getElementById('examplesContainer');
+  const t = I18N[currentLang];
+  root.innerHTML = DATA.examples.map((ex,i)=>`
+    <div class="example-block ${i===0?'open':''}" data-idx="${i}">
+      <div class="example-header">
+        <div>
+          <div class="example-tag">${pickLang(ex.tag)}</div>
+          <h3>${pickLang(ex.title)}</h3>
+        </div>
+        <div class="example-toggle">+</div>
+      </div>
+      <div class="example-body">
+        <div class="impact-model">
+          <div class="im-row">
+            <div class="im-label" style="background:#E8E8E2;color:var(--ink)">${t['examples.label.vision']}</div>
+            <div class="im-cards"><div class="im-card" style="background:#F4F4EE">${pickLang(ex.vision)}</div></div>
+          </div>
+          <div class="im-arrow">↑</div>
+          <div class="im-row">
+            <div class="im-label impact">${t['examples.label.impact']}</div>
+            <div class="im-cards"><div class="im-card" style="background:var(--ink);color:var(--paper);border-color:var(--ink)">${pickLang(ex.impact)}</div></div>
+          </div>
+          <div class="im-arrow">↑</div>
+          <div class="im-row">
+            <div class="im-label outcomes">${t['examples.label.outcomes']}</div>
+            <div class="im-cards">${ex.outcomes.map(o=>`<div class="im-card" style="background:var(--green)">${pickLang(o)}</div>`).join('')}</div>
+          </div>
+          <div class="im-arrow">↑</div>
+          <div class="im-row">
+            <div class="im-label outputs">${t['examples.label.outputs']}</div>
+            <div class="im-cards">${ex.outputs.map(o=>`<div class="im-card" style="background:var(--pink)">${pickLang(o)}</div>`).join('')}</div>
+          </div>
+          <div class="im-arrow">↑</div>
+          <div class="im-row">
+            <div class="im-label activities">${t['examples.label.activities']}</div>
+            <div class="im-cards">${ex.activities.map(o=>`<div class="im-card" style="background:var(--lilac)">${pickLang(o)}</div>`).join('')}</div>
+          </div>
+          <div class="im-row" style="margin-top:8px">
+            <div></div>
+            <div class="im-assumption"><span class="im-assumption-label">${t['examples.label.assumption']}</span><span>${pickLang(ex.assumption)}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  root.querySelectorAll('.example-block').forEach(block=>{
+    block.querySelector('.example-header').addEventListener('click',()=>{
+      block.classList.toggle('open');
+    });
+  });
+}
+
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.dataset.i18n;
+    if (I18N[currentLang][key]) el.innerHTML = I18N[currentLang][key];
+  });
+  document.documentElement.lang = currentLang;
+  document.title = currentLang==='nl' ? 'ADC — Datagedreven impact management' : 'ADC — Data-driven impact management';
+}
+
+function renderAll(){
+  applyI18n();
+  renderPillars();
+  renderSteps();
+  renderToc();
+  renderAi();
+  renderExamples();
+}
+
+// ============ EVENTS ============
+document.querySelectorAll('.lang-switch button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.lang-switch button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentLang = btn.dataset.lang;
+    renderAll();
+  });
+});
+
+injectShapes();
+renderAll();
+</script>
+</body>
+</html>
