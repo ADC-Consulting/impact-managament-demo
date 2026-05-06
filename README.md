@@ -1,1 +1,0 @@
-# impact-managament-demo
