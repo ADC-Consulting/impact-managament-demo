@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
   :root{
     --green: #4AF08C;
@@ -15,10 +16,14 @@
     --pink-deep: #FF6FD8;
     --lilac: #C8B6FF;
     --lilac-deep: #A78BFA;
+    --amber: #FFB84A;
     --ink: #0A0A0A;
     --ink-soft: #2A2A2A;
     --paper: #FAFAF7;
     --line: rgba(10,10,10,.12);
+    --status-good: #2DD46E;
+    --status-risk: #FFB84A;
+    --status-bad: #FF6F6F;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -44,7 +49,7 @@
   .logo{display:flex;align-items:center;gap:10px}
   .logo svg{width:62px;height:auto;display:block}
   .logo span{font-family:'Inter',sans-serif;font-weight:400;font-size:11px;color:var(--ink-soft);letter-spacing:0;line-height:1.2;border-left:1px solid var(--line);padding-left:10px}
-  .nav-links{display:flex;gap:24px;align-items:center}
+  .nav-links{display:flex;gap:22px;align-items:center}
   .nav-links a{
     color:var(--ink);text-decoration:none;font-size:13px;font-weight:500;
     position:relative;padding:4px 0;
@@ -64,11 +69,10 @@
   }
   .lang-switch button.active{background:var(--ink);color:var(--paper)}
 
-  /* ============ ADC GEOMETRIC SHAPES (used in section bg's) ============ */
   .shape-deco{position:absolute;pointer-events:none;z-index:1}
   .shape-deco svg{width:100%;height:100%;display:block;overflow:visible}
 
-  /* ============ HERO (GREEN) ============ */
+  /* ============ HERO ============ */
   section.hero{
     background:var(--green);
     min-height:100vh;
@@ -100,7 +104,7 @@
   .hero-shapes-1{top:60px;right:-40px;width:560px;height:560px}
   .hero-shapes-2{bottom:40px;left:-60px;width:280px;height:280px;opacity:.7}
 
-  /* ============ WHAT (paper) ============ */
+  /* ============ WHAT ============ */
   section.what{padding:120px 36px;max-width:1200px;margin:0 auto}
   .section-label{
     font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
@@ -123,11 +127,9 @@
   }
   .what-quote cite{display:block;margin-top:20px;font-size:13px;font-style:normal;color:var(--green);font-family:'Inter',sans-serif;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
 
-  /* ============ VALUE (4 pillars, GREEN) ============ */
+  /* ============ VALUE ============ */
   section.value{
-    background:var(--green);
-    padding:120px 36px;
-    position:relative;overflow:hidden;
+    background:var(--green);padding:120px 36px;position:relative;overflow:hidden;
   }
   .value-shapes{top:30px;right:-30px;width:300px;height:300px;opacity:.6}
   .value-inner{max-width:1300px;margin:0 auto;position:relative;z-index:2}
@@ -161,27 +163,24 @@
   .pillar.active .pillar-detail{display:block}
   .pillar.active .pillar-short{display:none}
 
-  /* ============ APPROACH (paper, 4 steps) ============ */
+  /* ============ APPROACH ============ */
   section.approach{padding:120px 36px;max-width:1300px;margin:0 auto}
   .approach-flow{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:60px;
-    position:relative;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:60px;position:relative;
   }
   .step{
-    background:var(--paper);
-    border:2px solid var(--ink);
-    border-radius:0;
-    padding:32px 28px;
-    cursor:pointer;
+    background:var(--paper);border:2px solid var(--ink);border-radius:0;
+    padding:32px 28px;cursor:pointer;
     transition:background .25s,color .25s;
-    position:relative;
-    min-height:380px;
+    position:relative;min-height:280px;
+    display:flex;flex-direction:column;
   }
   .step:first-child{border-radius:24px 0 0 24px}
   .step:last-child{border-radius:0 24px 24px 0}
   .step:not(:first-child){border-left:none}
-  .step.active,.step:hover{background:var(--ink);color:var(--paper)}
-  .step.active .step-num,.step:hover .step-num{background:var(--green);color:var(--ink)}
+  .step.active{background:var(--ink);color:var(--paper)}
+  .step.active .step-num{background:var(--green);color:var(--ink)}
+  .step:hover:not(.active){background:#F0F0EA}
   .step-num{
     width:36px;height:36px;background:var(--ink);color:var(--green);
     border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -189,10 +188,19 @@
     transition:all .25s;
   }
   .step h3{font-family:'Space Grotesk',sans-serif;font-size:20px;line-height:1.2;margin-bottom:14px;font-weight:700}
-  .step p{font-size:14px;line-height:1.5;margin-bottom:12px}
-  .step ul{font-size:13px;line-height:1.5;margin-top:12px;padding-left:0;list-style:none}
-  .step ul li{position:relative;padding-left:18px;margin-bottom:6px}
-  .step ul li::before{content:'→';position:absolute;left:0;top:0;font-weight:700}
+  .step .step-short{font-size:14px;line-height:1.5;flex:1}
+  .step .step-detail{display:none;margin-top:14px}
+  .step .step-detail p{font-size:14px;line-height:1.5;margin-bottom:12px}
+  .step .step-detail ul{font-size:13px;line-height:1.5;padding-left:0;list-style:none}
+  .step .step-detail ul li{position:relative;padding-left:18px;margin-bottom:6px}
+  .step .step-detail ul li::before{content:'→';position:absolute;left:0;top:0;font-weight:700}
+  .step.active .step-short{display:none}
+  .step.active .step-detail{display:block}
+  .step .step-expand{
+    font-size:12px;font-weight:600;margin-top:16px;display:flex;align-items:center;gap:6px;
+    text-transform:uppercase;letter-spacing:.05em;
+  }
+  .step.active .step-expand{display:none}
   .step .arrow-between{
     position:absolute;right:-14px;top:50%;transform:translateY(-50%);z-index:3;
     width:28px;height:28px;background:var(--green);border:2px solid var(--ink);border-radius:50%;
@@ -200,11 +208,9 @@
   }
   .step:last-child .arrow-between{display:none}
 
-  /* ============ TOC (Theory of Change, PINK) ============ */
+  /* ============ TOC ============ */
   section.toc{
-    background:var(--pink);
-    padding:120px 36px;
-    position:relative;overflow:hidden;
+    background:var(--pink);padding:120px 36px;position:relative;overflow:hidden;
   }
   .toc-shapes-1{top:80px;left:-40px;width:280px;height:280px;opacity:.5}
   .toc-shapes-2{bottom:60px;right:-40px;width:240px;height:240px;opacity:.45}
@@ -212,20 +218,13 @@
   .toc-section-title em{color:var(--paper);background:var(--ink);padding:0 12px}
   .toc-intro{max-width:60ch;font-size:17px;margin-bottom:60px;color:var(--ink)}
   .toc-model{
-    background:var(--paper);
-    border:2px solid var(--ink);
-    border-radius:24px;
-    padding:40px;
+    background:var(--paper);border:2px solid var(--ink);border-radius:24px;padding:40px;
     display:grid;grid-template-columns:1fr 1.5fr;gap:48px;align-items:start;
   }
   .toc-pyramid{display:flex;flex-direction:column;gap:8px}
   .toc-level{
-    background:var(--paper);
-    border:2px solid var(--ink);
-    border-radius:14px;
-    padding:18px 22px;
-    cursor:pointer;
-    transition:all .25s ease;
+    background:var(--paper);border:2px solid var(--ink);border-radius:14px;
+    padding:18px 22px;cursor:pointer;transition:all .25s ease;
     display:flex;align-items:center;gap:14px;
     font-family:'Space Grotesk',sans-serif;font-weight:700;
   }
@@ -240,107 +239,116 @@
   .toc-level-text{display:flex;flex-direction:column;flex:1;min-width:0}
   .toc-level .lvl-name{font-size:18px;line-height:1.1}
   .toc-level .lvl-scope{font-size:10px;font-weight:600;opacity:.65;text-transform:uppercase;letter-spacing:.05em;margin-top:3px;line-height:1.2}
-
   .toc-level-1{margin-left:0}
   .toc-level-2{margin-left:24px}
   .toc-level-3{margin-left:48px}
   .toc-level-4{margin-left:72px}
-
   .toc-detail{
     background:var(--pink);border:2px solid var(--ink);border-radius:14px;padding:32px;min-height:340px;
   }
   .toc-detail h3{font-family:'Space Grotesk',sans-serif;font-size:28px;margin-bottom:16px;line-height:1.1}
   .toc-detail p{font-size:15px;line-height:1.55;margin-bottom:14px}
   .toc-detail .example{
-    background:var(--ink);color:var(--pink);padding:18px;border-radius:10px;margin-top:16px;
-    font-size:14px;
+    background:var(--ink);color:var(--pink);padding:18px;border-radius:10px;margin-top:16px;font-size:14px;
   }
   .toc-detail .example strong{display:block;margin-bottom:6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper)}
 
-  /* ============ INDICATORS (paper) ============ */
-  section.indicators{padding:120px 36px;max-width:1300px;margin:0 auto;position:relative}
-  .ind-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:60px;margin-top:60px;align-items:start}
-  .ind-text p{font-size:16px;line-height:1.6;color:var(--ink-soft);margin-bottom:18px;max-width:55ch}
-  .ind-text p strong{color:var(--ink)}
-  .ind-criteria{
-    background:var(--ink);color:var(--paper);border-radius:24px;padding:36px;
+  /* ============ INDICATORS (simplified) ============ */
+  section.indicators{padding:120px 36px;max-width:1200px;margin:0 auto;position:relative}
+  .ind-intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px;align-items:start}
+  .ind-intro-grid p{font-size:17px;line-height:1.6;color:var(--ink-soft);max-width:50ch}
+  .ind-intro-grid p strong{color:var(--ink)}
+  .ind-examples{margin-top:60px}
+  .ind-examples h3{
+    font-family:'Space Grotesk',sans-serif;font-size:18px;text-transform:uppercase;
+    letter-spacing:.06em;margin-bottom:24px;display:flex;align-items:center;gap:14px;
   }
-  .ind-criteria h3{font-family:'Space Grotesk',sans-serif;font-size:20px;margin-bottom:24px;color:var(--green)}
-  .crit-row{
-    display:grid;grid-template-columns:48px 1fr;gap:18px;padding:18px 0;
-    border-bottom:1px solid rgba(250,250,247,.15);align-items:start;
+  .ind-examples h3::before{content:'';width:32px;height:2px;background:var(--ink)}
+  .ind-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .ind-card{
+    background:var(--paper);border:2px solid var(--ink);border-radius:18px;padding:24px;
+    transition:transform .2s,box-shadow .2s;
   }
-  .crit-row:last-child{border-bottom:none}
-  .crit-icon{
-    width:42px;height:42px;border-radius:10px;background:var(--green);color:var(--ink);
-    display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;
+  .ind-card:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--green-deep)}
+  .ind-card .ind-tag{
+    font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--paper);background:var(--ink);padding:4px 8px;border-radius:6px;display:inline-block;margin-bottom:14px;
   }
-  .crit-row h4{font-size:15px;font-family:'Space Grotesk',sans-serif;margin-bottom:4px;color:var(--paper)}
-  .crit-row p{font-size:13px;color:rgba(250,250,247,.75);line-height:1.5;margin:0}
+  .ind-card .ind-tag.qual{background:var(--green-deep);color:var(--ink)}
+  .ind-card .ind-tag.qual-num{background:var(--pink-deep);color:var(--ink)}
+  .ind-card h4{font-family:'Space Grotesk',sans-serif;font-size:17px;line-height:1.2;margin-bottom:10px}
+  .ind-card p{font-size:13px;line-height:1.5;color:var(--ink-soft);margin-bottom:14px}
+  .ind-card .ind-example{
+    background:#F4F4EE;border-radius:10px;padding:12px 14px;font-size:13px;font-style:italic;color:var(--ink);
+    border-left:3px solid var(--ink);
+  }
 
-  .ind-scales{margin-top:50px}
-  .scale-row{display:grid;grid-template-columns:160px 1fr 160px;gap:16px;align-items:center;margin-bottom:20px}
-  .scale-row span{font-size:13px;font-weight:600}
-  .scale-row span:first-child{text-align:right;color:var(--ink-soft)}
-  .scale-row span:last-child{text-align:left;color:var(--ink-soft)}
-  .scale-bar{
-    height:14px;border-radius:999px;background:linear-gradient(90deg,var(--paper),var(--green));
-    border:2px solid var(--ink);position:relative;
-  }
-  .scale-bar.alt{background:linear-gradient(90deg,var(--paper),var(--pink-deep))}
-
-  /* ============ AI APPLICATIONS (LILAC) ============ */
+  /* ============ AI APPLICATIONS (rewired layout) ============ */
   section.ai{
-    background:var(--lilac);
-    padding:120px 36px;
-    position:relative;overflow:hidden;
+    background:var(--lilac);padding:120px 36px;position:relative;overflow:hidden;
   }
   .ai-shapes-1{top:60px;right:-50px;width:340px;height:340px;opacity:.55}
   .ai-shapes-2{bottom:0;left:-30px;width:200px;height:200px;opacity:.5}
   .ai-inner{max-width:1300px;margin:0 auto;position:relative;z-index:2}
   .ai-section-title em{color:var(--paper);background:var(--ink);padding:0 12px}
-  .ai-intro{max-width:65ch;font-size:17px;margin-bottom:60px;color:var(--ink)}
-  .ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  .ai-card{
-    background:var(--paper);border:2px solid var(--ink);border-radius:20px;
-    padding:0;overflow:hidden;
-    display:flex;flex-direction:column;
-    transition:transform .2s,box-shadow .2s;
-  }
-  .ai-card:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 var(--ink)}
-  .ai-card-header{
-    background:var(--ink);color:var(--lilac);padding:20px 22px;
-    border-bottom:2px solid var(--ink);
-  }
-  .ai-card-header .ai-tag{
-    font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-    font-weight:700;color:var(--paper);opacity:.6;margin-bottom:6px;
-  }
-  .ai-card-header h3{font-family:'Space Grotesk',sans-serif;font-size:17px;line-height:1.25;font-weight:700;color:var(--paper)}
-  .ai-card-body{padding:0;display:flex;flex-direction:column;flex:1}
-  .ai-row{
-    display:grid;grid-template-columns:90px 1fr;gap:14px;
-    padding:16px 22px;border-bottom:1px solid var(--line);align-items:start;
-  }
-  .ai-row:last-child{border-bottom:none}
-  .ai-row .label{
-    background:var(--lilac);color:var(--ink);font-size:11px;font-weight:700;
-    text-transform:uppercase;letter-spacing:.04em;
-    padding:6px 8px;border-radius:6px;text-align:center;line-height:1.15;
-  }
-  .ai-row .content{font-size:13px;line-height:1.5;color:var(--ink-soft)}
+  .ai-intro{max-width:65ch;font-size:17px;margin-bottom:48px;color:var(--ink)}
 
-  /* ============ EXAMPLES (paper, 3 cases - now full impact model) ============ */
+  .ai-tabs{
+    display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;
+  }
+  .ai-tab{
+    background:var(--paper);border:2px solid var(--ink);border-radius:999px;
+    padding:10px 18px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;font-size:13px;
+    transition:all .2s;
+  }
+  .ai-tab.active{background:var(--ink);color:var(--lilac)}
+  .ai-tab:hover:not(.active){background:rgba(250,250,247,.6)}
+  .ai-tab .ai-tab-num{
+    display:inline-block;width:22px;height:22px;background:var(--lilac);color:var(--ink);
+    border-radius:50%;font-weight:700;text-align:center;line-height:22px;font-size:11px;margin-right:8px;
+  }
+  .ai-tab.active .ai-tab-num{background:var(--paper)}
+
+  .ai-panel{
+    background:var(--paper);border:2px solid var(--ink);border-radius:24px;
+    overflow:hidden;display:none;
+  }
+  .ai-panel.active{display:block}
+  .ai-panel-header{
+    background:var(--ink);color:var(--paper);padding:28px 36px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+  }
+  .ai-panel-header .ai-tag{
+    font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+    color:var(--lilac);margin-bottom:6px;
+  }
+  .ai-panel-header h3{font-family:'Space Grotesk',sans-serif;font-size:24px;line-height:1.25;font-weight:700;max-width:50ch}
+  .ai-panel-body{
+    padding:32px 36px;display:grid;grid-template-columns:repeat(2,1fr);gap:18px;
+  }
+  .ai-pill{
+    background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:22px;
+  }
+  .ai-pill .label{
+    background:var(--lilac);color:var(--ink);
+    font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+    padding:5px 10px;border-radius:6px;display:inline-block;margin-bottom:12px;
+  }
+  .ai-pill h4{font-family:'Space Grotesk',sans-serif;font-size:15px;margin-bottom:8px;font-weight:700}
+  .ai-pill p{font-size:14px;line-height:1.5;color:var(--ink-soft)}
+
+  /* ============ EXAMPLES ============ */
   section.examples{padding:120px 36px;max-width:1400px;margin:0 auto}
   .example-block{
-    margin-top:60px;border:2px solid var(--ink);border-radius:24px;overflow:hidden;
-    background:var(--paper);
+    margin-top:32px;border:2px solid var(--ink);border-radius:24px;overflow:hidden;background:var(--paper);
   }
+  .example-block:first-of-type{margin-top:60px}
   .example-header{
-    padding:28px 32px;background:var(--paper);border-bottom:2px solid var(--ink);
+    padding:28px 32px;background:var(--paper);border-bottom:2px solid transparent;
     display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
-    cursor:pointer;transition:background .2s;
+    cursor:pointer;transition:background .2s,border-color .2s;
   }
+  .example-block.open .example-header{border-bottom-color:var(--ink)}
   .example-header:hover{background:#F0F0EA}
   .example-tag{
     font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
@@ -353,21 +361,27 @@
     transition:transform .25s;flex-shrink:0;
   }
   .example-block.open .example-toggle{transform:rotate(45deg)}
-  .example-body{
-    display:none;padding:32px;background:var(--paper);
-  }
+  .example-body{display:none;padding:32px;background:var(--paper)}
   .example-block.open .example-body{display:block}
+  .example-tabs{
+    display:flex;gap:8px;margin-bottom:24px;border-bottom:1px solid var(--line);
+  }
+  .example-tab{
+    background:none;border:none;padding:12px 18px;font-family:inherit;font-weight:600;font-size:13px;
+    cursor:pointer;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;
+    border-bottom:3px solid transparent;margin-bottom:-1px;
+  }
+  .example-tab.active{color:var(--ink);border-bottom-color:var(--ink)}
+  .example-tab-content{display:none}
+  .example-tab-content.active{display:block}
 
   .impact-model{display:grid;gap:14px}
-  .im-row{
-    display:grid;grid-template-columns:140px 1fr;gap:18px;align-items:stretch;
-  }
+  .im-row{display:grid;grid-template-columns:140px 1fr;gap:18px;align-items:stretch}
   .im-label{
     background:var(--ink);color:var(--paper);
     font-family:'Space Grotesk',sans-serif;font-weight:700;
     font-size:13px;text-transform:uppercase;letter-spacing:.08em;
-    padding:14px 18px;border-radius:12px;
-    display:flex;align-items:center;justify-content:flex-start;
+    padding:14px 18px;border-radius:12px;display:flex;align-items:center;
   }
   .im-label.impact{background:var(--ink);color:var(--green)}
   .im-label.outcomes{background:var(--green);color:var(--ink)}
@@ -378,22 +392,198 @@
     background:var(--paper);border:2px solid var(--ink);border-radius:12px;
     padding:14px 16px;font-size:14px;line-height:1.4;flex:1;min-width:180px;
   }
-  .im-arrow{
-    text-align:center;color:var(--ink-soft);font-size:20px;margin:-4px 0;
-    grid-column:1/-1;
-  }
+  .im-arrow{text-align:center;color:var(--ink-soft);font-size:20px;margin:-4px 0;grid-column:1/-1}
   .im-assumption{
-    margin-top:12px;background:#FFF8E1;border:2px dashed var(--ink);
-    border-radius:12px;padding:14px 18px;font-size:13px;
-    grid-column:2;display:flex;gap:10px;align-items:flex-start;
+    margin-top:12px;background:#FFF8E1;border:2px dashed var(--ink);border-radius:12px;
+    padding:14px 18px;font-size:13px;grid-column:2;display:flex;gap:10px;align-items:flex-start;
   }
   .im-assumption-label{
     font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;
-    text-transform:uppercase;letter-spacing:.06em;color:var(--ink);
+    text-transform:uppercase;letter-spacing:.06em;
     background:var(--ink);color:#FFF8E1;padding:3px 8px;border-radius:6px;flex-shrink:0;
   }
 
-  /* ============ CONTACT (GREEN) ============ */
+  /* indicators inside example */
+  .ex-ind-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+  .ex-ind{
+    background:var(--paper);border:2px solid var(--ink);border-radius:14px;padding:18px 20px;
+  }
+  .ex-ind-level{
+    font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 8px;border-radius:5px;display:inline-block;margin-bottom:10px;
+  }
+  .ex-ind-level.impact{background:var(--ink);color:var(--green)}
+  .ex-ind-level.outcomes{background:var(--green);color:var(--ink)}
+  .ex-ind-level.outputs{background:var(--pink);color:var(--ink)}
+  .ex-ind-level.activities{background:var(--lilac);color:var(--ink)}
+  .ex-ind h5{font-family:'Space Grotesk',sans-serif;font-size:14px;margin-bottom:6px;line-height:1.3}
+  .ex-ind .ex-ind-meta{font-size:12px;color:var(--ink-soft);line-height:1.4}
+  .ex-ind .ex-ind-type{
+    display:inline-block;font-size:10px;font-weight:600;color:var(--ink-soft);
+    text-transform:uppercase;letter-spacing:.05em;margin-top:8px;
+  }
+
+  /* ============ DASHBOARD (LILAC) ============ */
+  section.dashboard{
+    background:#F4F2FF;padding:120px 36px;position:relative;overflow:hidden;
+  }
+  .dash-shapes-1{top:60px;right:-50px;width:300px;height:300px;opacity:.5;color:var(--lilac)}
+  .dash-shapes-2{bottom:80px;left:-30px;width:220px;height:220px;opacity:.4;color:var(--lilac)}
+  .dash-inner{max-width:1400px;margin:0 auto;position:relative;z-index:2}
+  .dash-section-title em{color:var(--paper);background:var(--ink);padding:0 12px}
+  .dash-intro{max-width:65ch;font-size:17px;margin-bottom:48px;color:var(--ink)}
+
+  /* dashboard mockup container */
+  .dash-mockup{
+    background:var(--paper);border:2px solid var(--ink);border-radius:24px;
+    overflow:hidden;
+    box-shadow:14px 14px 0 var(--ink);
+  }
+  .dash-mockup-bar{
+    background:var(--ink);color:var(--paper);padding:14px 22px;
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:13px;font-weight:600;
+  }
+  .dash-mockup-bar .dots{display:flex;gap:6px}
+  .dash-mockup-bar .dots span{width:10px;height:10px;border-radius:50%;background:rgba(250,250,247,.3)}
+  .dash-mockup-bar .dots span:first-child{background:var(--status-bad)}
+  .dash-mockup-bar .dots span:nth-child(2){background:var(--status-risk)}
+  .dash-mockup-bar .dots span:nth-child(3){background:var(--status-good)}
+
+  .dash-tabs{
+    display:flex;gap:0;background:#F0F0EA;border-bottom:1px solid var(--line);
+    overflow-x:auto;
+  }
+  .dash-tab{
+    background:none;border:none;padding:14px 22px;font-family:inherit;font-size:13px;font-weight:600;
+    cursor:pointer;color:var(--ink-soft);white-space:nowrap;
+    border-bottom:3px solid transparent;transition:all .2s;
+  }
+  .dash-tab:hover{background:rgba(0,0,0,.03)}
+  .dash-tab.active{color:var(--ink);background:var(--paper);border-bottom-color:var(--ink)}
+  .dash-tab .dt-icon{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle}
+  .dash-tab .dt-icon.impact{background:var(--ink)}
+  .dash-tab .dt-icon.outcome{background:var(--green-deep)}
+  .dash-tab .dt-icon.suboutcome{background:var(--lilac-deep)}
+  .dash-tab .dt-icon.output{background:var(--pink-deep)}
+
+  .dash-content{padding:28px}
+  .dash-overview{display:grid;grid-template-columns:1.4fr 1fr;gap:24px}
+  .dash-tree{
+    background:#FAFAF7;border:1px solid var(--line);border-radius:16px;padding:20px;
+    max-height:520px;overflow-y:auto;
+  }
+  .dash-tree h4{
+    font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;
+    color:var(--ink-soft);margin-bottom:14px;
+  }
+  .tree-node{
+    background:var(--paper);border:1.5px solid var(--ink);border-radius:10px;
+    padding:10px 14px;margin-bottom:6px;cursor:pointer;
+    display:flex;align-items:center;gap:10px;
+    font-size:13px;line-height:1.3;
+    transition:all .2s;
+  }
+  .tree-node:hover{transform:translateX(4px);box-shadow:3px 3px 0 var(--ink)}
+  .tree-node.selected{background:var(--ink);color:var(--paper)}
+  .tree-node .tn-bullet{
+    width:10px;height:10px;border-radius:50%;flex-shrink:0;
+  }
+  .tree-node .tn-bullet.impact{background:var(--ink);border:2px solid var(--ink)}
+  .tree-node.selected .tn-bullet.impact{background:var(--paper);border-color:var(--paper)}
+  .tree-node .tn-bullet.outcome{background:var(--green-deep)}
+  .tree-node .tn-bullet.suboutcome{background:var(--lilac-deep)}
+  .tree-node .tn-bullet.output{background:var(--pink-deep)}
+  .tree-node .tn-bullet.activity{background:var(--amber)}
+  .tree-node .tn-status{
+    margin-left:auto;width:8px;height:8px;border-radius:50%;flex-shrink:0;
+  }
+  .tn-status.on-track{background:var(--status-good)}
+  .tn-status.at-risk{background:var(--status-risk)}
+  .tn-status.behind{background:var(--status-bad)}
+  .tree-node[data-level="impact"]{padding-left:14px;font-weight:700;background:#1A1A1A;color:var(--paper);border-color:#1A1A1A}
+  .tree-node[data-level="outcome"]{margin-left:18px;font-weight:600}
+  .tree-node[data-level="suboutcome"]{margin-left:36px}
+  .tree-node[data-level="output"]{margin-left:54px;font-size:12px}
+  .tree-node[data-level="activity"]{margin-left:72px;font-size:12px}
+
+  /* node detail panel */
+  .dash-detail{
+    background:#FAFAF7;border:1px solid var(--line);border-radius:16px;padding:24px;
+    display:flex;flex-direction:column;gap:18px;
+  }
+  .dash-detail .dd-tag{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--ink);color:var(--paper);font-size:10px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.08em;padding:5px 10px;border-radius:6px;width:max-content;
+  }
+  .dash-detail h3{font-family:'Space Grotesk',sans-serif;font-size:20px;line-height:1.2}
+  .dash-detail .dd-desc{font-size:14px;color:var(--ink-soft);line-height:1.5}
+  .dd-status{
+    display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.05em;
+  }
+  .dd-status .dot{width:10px;height:10px;border-radius:50%}
+  .dd-status .dot.on-track{background:var(--status-good)}
+  .dd-status .dot.at-risk{background:var(--status-risk)}
+  .dd-status .dot.behind{background:var(--status-bad)}
+
+  .dd-indicator{
+    background:var(--paper);border:1.5px solid var(--ink);border-radius:14px;padding:18px;
+  }
+  .dd-indicator h4{font-family:'Space Grotesk',sans-serif;font-size:14px;line-height:1.25;margin-bottom:6px}
+  .dd-indicator-meta{
+    font-size:12px;color:var(--ink-soft);margin-bottom:10px;
+    display:flex;gap:14px;flex-wrap:wrap;
+  }
+  .dd-indicator-meta strong{color:var(--ink)}
+  .dd-progress{
+    height:8px;background:#F0F0EA;border-radius:4px;overflow:hidden;margin-bottom:10px;
+  }
+  .dd-progress-bar{height:100%;border-radius:4px;background:var(--status-good);transition:width .4s}
+  .dd-progress-bar.at-risk{background:var(--status-risk)}
+  .dd-progress-bar.behind{background:var(--status-bad)}
+  .dd-chart-wrap{position:relative;height:160px;width:100%;margin-top:4px}
+  .dd-chart-wrap.doughnut{height:180px}
+  .dd-chart{display:block!important;width:100%!important;height:100%!important}
+
+  .dash-empty{
+    color:var(--ink-soft);font-size:14px;font-style:italic;text-align:center;padding:60px 24px;
+  }
+
+  /* KPI summary above tree+detail */
+  .dash-kpis{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;
+  }
+  .kpi{
+    background:var(--paper);border:1.5px solid var(--ink);border-radius:14px;padding:18px;
+  }
+  .kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-weight:700;margin-bottom:8px}
+  .kpi-value{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;line-height:1}
+  .kpi-bar{height:5px;background:#F0F0EA;border-radius:3px;margin-top:10px;overflow:hidden}
+  .kpi-bar div{height:100%;border-radius:3px}
+  .kpi.good .kpi-value{color:var(--status-good)}
+  .kpi.risk .kpi-value{color:#D88A1F}
+  .kpi.bad .kpi-value{color:var(--status-bad)}
+
+  .dash-legend{
+    margin-top:24px;display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);
+    align-items:center;
+  }
+  .dash-legend strong{color:var(--ink);text-transform:uppercase;font-size:11px;letter-spacing:.08em}
+  .dash-legend span.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+
+  .dash-cta{
+    margin-top:32px;background:var(--ink);color:var(--paper);
+    border-radius:24px;padding:36px 40px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;
+  }
+  .dash-cta h3{font-family:'Space Grotesk',sans-serif;font-size:24px;line-height:1.2;max-width:38ch}
+  .dash-cta p{font-size:14px;color:rgba(250,250,247,.75);max-width:50ch;margin-top:6px;line-height:1.5}
+  .dash-cta .btn-light{background:var(--lilac);border-color:var(--lilac);color:var(--ink)}
+  .dash-cta .btn-light:hover{background:var(--paper)}
+
+  /* ============ CONTACT ============ */
   section.contact{
     background:var(--green);padding:120px 36px;position:relative;overflow:hidden;
   }
@@ -401,17 +591,26 @@
   .contact-inner{max-width:1300px;margin:0 auto;position:relative;z-index:2}
   .contact-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;margin-top:48px;align-items:start}
   .contact-cta{font-size:clamp(28px,3.5vw,42px);font-family:'Space Grotesk',sans-serif;font-weight:700;line-height:1.1;margin-bottom:32px}
-  .person{background:var(--ink);color:var(--green);padding:32px;border-radius:18px}
-  .person-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;margin-bottom:6px}
-  .person-role{font-size:13px;color:var(--paper);margin-bottom:18px;font-weight:500}
-  .person a{color:var(--green);text-decoration:none;display:block;font-size:14px;margin-bottom:6px;font-weight:500}
+
+  .person{
+    background:var(--ink);color:var(--green);padding:0;border-radius:24px;
+    overflow:hidden;display:flex;flex-direction:column;
+  }
+  .person-photo{
+    aspect-ratio:1/1;width:100%;background-size:cover;background-position:center top;
+    border-bottom:2px solid var(--green);
+  }
+  .person-body{padding:28px 32px}
+  .person-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:24px;margin-bottom:6px;color:var(--paper)}
+  .person-role{font-size:13px;color:var(--green);margin-bottom:18px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+  .person a{color:var(--green);text-decoration:none;display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:8px;font-weight:500}
   .person a:hover{text-decoration:underline}
+  .person a::before{content:'→';transition:transform .2s}
+  .person a:hover::before{transform:translateX(3px)}
   .contact-cta-btn{margin-top:24px;display:inline-flex}
 
   /* ============ FOOTER ============ */
-  footer{
-    background:var(--ink);color:var(--paper);padding:48px 36px 24px;
-  }
+  footer{background:var(--ink);color:var(--paper);padding:48px 36px 24px}
   .footer-inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px}
   .footer-brand svg{width:80px;height:auto;margin-bottom:8px}
   .footer-brand svg path{fill:var(--green)!important}
@@ -422,71 +621,66 @@
 
   /* ============ RESPONSIVE ============ */
   @media (max-width:1100px){
-    .ai-grid{grid-template-columns:1fr}
     .approach-flow{grid-template-columns:repeat(2,1fr)}
     .step:nth-child(2){border-radius:0 24px 0 0}
     .step:nth-child(3){border-radius:0 0 0 24px;border-left:2px solid var(--ink)}
     .step:first-child{border-radius:24px 0 0 0}
     .step:last-child{border-radius:0 0 24px 0;border-left:none}
     .value-grid{grid-template-columns:repeat(2,1fr)}
+    .ind-cards{grid-template-columns:1fr}
+    .ai-panel-body{grid-template-columns:1fr}
+    .dash-overview{grid-template-columns:1fr}
+    .dash-kpis{grid-template-columns:repeat(2,1fr)}
   }
   @media (max-width:900px){
     .nav-links{display:none}
     nav.top{padding:14px 20px}
     section.hero{padding:120px 20px 60px}
-    section.what,section.value,section.approach,section.toc,section.examples,section.indicators,section.ai,section.contact{padding-left:20px;padding-right:20px}
-    .what-grid,.value-grid,.approach-flow,.toc-model,.contact-grid,.footer-inner,.ind-grid{grid-template-columns:1fr;gap:24px}
+    section.what,section.value,section.approach,section.toc,section.examples,section.indicators,section.ai,section.dashboard,section.contact{padding-left:20px;padding-right:20px}
+    .what-grid,.value-grid,.approach-flow,.toc-model,.contact-grid,.footer-inner,.ind-intro-grid{grid-template-columns:1fr;gap:24px}
     .step{border-radius:14px!important;border-left:2px solid var(--ink)!important;margin-bottom:8px}
     .step .arrow-between{display:none}
     .toc-level-2,.toc-level-3,.toc-level-4{margin-left:0}
     .im-row{grid-template-columns:1fr}
     .im-label{justify-content:center}
     .im-assumption{grid-column:1}
-    .scale-row{grid-template-columns:1fr;gap:6px}
-    .scale-row span:first-child,.scale-row span:last-child{text-align:left}
+    .tree-node[data-level="outcome"]{margin-left:8px}
+    .tree-node[data-level="suboutcome"]{margin-left:16px}
+    .tree-node[data-level="output"]{margin-left:24px}
+    .tree-node[data-level="activity"]{margin-left:32px}
   }
 </style>
 </head>
 <body>
 
-<!-- Hidden SVG sprite of geometric ADC shapes — referenced via <use> -->
+<!-- SVG sprite of geometric ADC shapes -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <!-- Plus / cross with thick rounded arms -->
     <symbol id="adc-plus" viewBox="0 0 100 100">
       <path d="M40 4 h20 a4 4 0 0 1 4 4 v32 h32 a4 4 0 0 1 4 4 v20 a4 4 0 0 1 -4 4 h-32 v32 a4 4 0 0 1 -4 4 h-20 a4 4 0 0 1 -4 -4 v-32 h-32 a4 4 0 0 1 -4 -4 v-20 a4 4 0 0 1 4 -4 h32 v-32 a4 4 0 0 1 4 -4 z" fill="currentColor"/>
     </symbol>
-    <!-- Diamond / rotated square -->
     <symbol id="adc-diamond" viewBox="0 0 100 100">
       <rect x="20" y="20" width="60" height="60" rx="6" transform="rotate(45 50 50)" fill="currentColor"/>
     </symbol>
-    <!-- Pill / capsule horizontal -->
     <symbol id="adc-pill" viewBox="0 0 100 40">
       <rect x="0" y="0" width="100" height="40" rx="20" fill="currentColor"/>
     </symbol>
-    <!-- Bone / capsule with circles on ends -->
     <symbol id="adc-bone" viewBox="0 0 140 40">
       <circle cx="20" cy="20" r="20" fill="currentColor"/>
       <rect x="20" y="6" width="100" height="28" fill="currentColor"/>
       <circle cx="120" cy="20" r="20" fill="currentColor"/>
     </symbol>
-    <!-- Small dot -->
     <symbol id="adc-dot" viewBox="0 0 20 20">
       <circle cx="10" cy="10" r="10" fill="currentColor"/>
     </symbol>
-    <!-- Tiny x -->
     <symbol id="adc-x" viewBox="0 0 30 30">
       <path d="M5 8 l3 -3 l7 7 l7 -7 l3 3 l-7 7 l7 7 l-3 3 l-7 -7 l-7 7 l-3 -3 l7 -7 z" fill="currentColor"/>
     </symbol>
-    <!-- Rounded square -->
     <symbol id="adc-rsquare" viewBox="0 0 60 60">
       <rect x="0" y="0" width="60" height="60" rx="12" fill="currentColor"/>
     </symbol>
   </defs>
 </svg>
-
-<!-- Reusable shape composition (white-on-color background decoration) -->
-<!-- Inline as template in JS to vary per section -->
 
 <!-- ============ NAV ============ -->
 <nav class="top">
@@ -504,6 +698,7 @@
     <a href="#indicators" data-i18n="nav.indicators">Indicatoren</a>
     <a href="#ai" data-i18n="nav.ai">AI &amp; data</a>
     <a href="#examples" data-i18n="nav.examples">Voorbeelden</a>
+    <a href="#dashboard" data-i18n="nav.dashboard">Dashboard</a>
     <a href="#contact" data-i18n="nav.contact">Contact</a>
   </div>
   <div class="lang-switch">
@@ -516,7 +711,6 @@
 <section class="hero" id="top">
   <div class="shape-deco hero-shapes-1" id="heroShapes1" style="color:#FAFAF7"></div>
   <div class="shape-deco hero-shapes-2" id="heroShapes2" style="color:#FAFAF7"></div>
-
   <div class="hero-content">
     <div class="hero-tag" data-i18n="hero.tag">Datagedreven Impact Management</div>
     <h1 class="display"><span data-i18n="hero.h1.a">Maak je</span> <em data-i18n="hero.h1.b">impact</em> <span data-i18n="hero.h1.c">meetbaar, zichtbaar en stuurbaar.</span></h1>
@@ -539,13 +733,13 @@
       <p data-i18n="what.p3">Klassieke beleidsanalyse en -evaluatie zijn gericht op het achteraf afleggen van verantwoording. Dit is belangrijk maar is vaak minder goed bruikbaar voor besluitvorming over <strong>lopende of toekomstige activiteiten</strong>.</p>
     </div>
     <div class="what-quote">
-      <span data-i18n="what.quote">Meten is weten.</span>
-      <cite data-i18n="what.cite">— Nederlands gezegde</cite>
+      <span data-i18n="what.quote">What gets measured gets managed.</span>
+      <cite data-i18n="what.cite">— Peter Drucker</cite>
     </div>
   </div>
 </section>
 
-<!-- ============ VALUE / 4 PILLARS ============ -->
+<!-- ============ VALUE ============ -->
 <section class="value" id="value">
   <div class="shape-deco value-shapes" id="valueShapes" style="color:#FAFAF7"></div>
   <div class="value-inner">
@@ -556,15 +750,15 @@
   </div>
 </section>
 
-<!-- ============ APPROACH (4 STEPS) ============ -->
+<!-- ============ APPROACH ============ -->
 <section class="approach" id="approach">
   <div class="section-label" data-i18n="approach.label">03 — Onze aanpak</div>
   <h2 class="section-title display"><span data-i18n="approach.title.a">Wij introduceren impactmanagement in</span> <em data-i18n="approach.title.b">vier stappen</em>.</h2>
-  <p style="max-width:60ch;font-size:17px;color:var(--ink-soft)" data-i18n="approach.intro">Een dynamische cyclus van meten, leren en bijsturen — geen lineair traject met een eindstreep. Klik op een stap voor een toelichting.</p>
+  <p style="max-width:60ch;font-size:17px;color:var(--ink-soft)" data-i18n="approach.intro">Een dynamische cyclus van meten, leren en bijsturen — geen lineair traject met een eindstreep. Klik op een stap voor de details.</p>
   <div class="approach-flow" id="steps"></div>
 </section>
 
-<!-- ============ THEORY OF CHANGE ============ -->
+<!-- ============ TOC ============ -->
 <section class="toc" id="toc">
   <div class="shape-deco toc-shapes-1" id="tocShapes1" style="color:#FAFAF7"></div>
   <div class="shape-deco toc-shapes-2" id="tocShapes2" style="color:#FAFAF7"></div>
@@ -572,70 +766,125 @@
     <div class="section-label" data-i18n="toc.label">04 — Methodologie</div>
     <h2 class="section-title display toc-section-title"><span data-i18n="toc.title.a">De</span> <em data-i18n="toc.title.b">Theory of Change</em>.</h2>
     <p class="toc-intro" data-i18n="toc.intro">Een impactmodel beschrijft hoe je gewenste impact tot stand komt via een logische keten van resultaten. Klik op een niveau om te zien wat er bedoeld wordt — en hoe controle en invloed verschuiven.</p>
-
     <div class="toc-model">
       <div class="toc-pyramid" id="tocPyramid"></div>
       <div class="toc-detail" id="tocDetail"></div>
     </div>
-
     <p style="max-width:60ch;font-size:15px;color:var(--ink);margin-top:32px;font-style:italic" data-i18n="toc.note">💡 We redeneren altijd <strong>terug</strong> — van impact naar activiteiten. Zo voorkom je dat je druk bent met dingen die niet bijdragen aan je doel.</p>
   </div>
 </section>
 
-<!-- ============ INDICATORS ============ -->
+<!-- ============ INDICATORS (simplified) ============ -->
 <section class="indicators" id="indicators">
   <div class="section-label" data-i18n="ind.label">05 — Indicatoren</div>
   <h2 class="section-title display"><span data-i18n="ind.title.a">Hoe maak je impact</span> <em data-i18n="ind.title.b">meetbaar</em><span data-i18n="ind.title.c">?</span></h2>
-  <p style="max-width:65ch;font-size:17px;color:var(--ink-soft)" data-i18n="ind.intro">Een indicator is een graadmeter die een indruk geeft van een situatie of ontwikkeling. Zonder goede indicatoren blijft je impactmodel een mooi verhaal — met indicatoren wordt het stuurbaar.</p>
 
-  <div class="ind-grid">
-    <div class="ind-text">
-      <p data-i18n="ind.p1"><strong>Kwantitatief en kwalitatief.</strong> Een goede meetset combineert beide. Kwantitatieve indicatoren (aantal, percentage) tonen schaal. Kwalitatieve indicatoren (tevredenheid, perceptie) tonen kwaliteit en diepte van het resultaat.</p>
-      <p data-i18n="ind.p2"><strong>Kwalitatieve data kwantificeren.</strong> Om kwalitatieve data vergelijkbaar te maken kun je classificatieschalen gebruiken — bijvoorbeeld een 1-tot-10-schaal voor tevredenheid of een 5-puntsschaal voor ervaren impact.</p>
-      <p data-i18n="ind.p3"><strong>De logica van het impactmodel als routekaart.</strong> Door indicatoren te koppelen aan elk niveau van het model — impact, outcomes, outputs, activiteiten — meet je gericht en samenhangend, in plaats van losse datapunten.</p>
+  <div class="ind-intro-grid">
+    <p data-i18n="ind.what"><strong>Wat is een indicator?</strong> Een indicator is een graadmeter die een indruk geeft van een situatie of ontwikkeling. Door indicatoren te koppelen aan elk niveau van het impactmodel maak je gericht meten mogelijk.</p>
+    <p data-i18n="ind.use"><strong>Waarvoor gebruik je ze?</strong> Met indicatoren toets je of je werk daadwerkelijk een meetbare bijdrage levert aan de beoogde impact — en op welke punten je moet bijsturen.</p>
+  </div>
 
-      <div class="ind-scales">
-        <div class="scale-row"><span data-i18n="ind.scale1.left">Zeer ontevreden</span><div class="scale-bar"></div><span data-i18n="ind.scale1.right">Zeer tevreden</span></div>
-        <div class="scale-row"><span data-i18n="ind.scale2.left">Weinig impact</span><div class="scale-bar alt"></div><span data-i18n="ind.scale2.right">Veel impact</span></div>
+  <div class="ind-examples">
+    <h3 data-i18n="ind.examples.heading">Drie soorten indicatoren — drie voorbeelden</h3>
+    <div class="ind-cards">
+      <div class="ind-card">
+        <div class="ind-tag" data-i18n="ind.t.quant">Kwantitatief</div>
+        <h4 data-i18n="ind.ex1.h">% goedgekeurde investeringsplannen</h4>
+        <p data-i18n="ind.ex1.p">Meet schaal en voortgang in een duidelijk getal — direct vergelijkbaar over tijd en tussen partijen.</p>
+        <div class="ind-example" data-i18n="ind.ex1.e">Streefwaarde 90% · gemeten 86% · status: on track.</div>
       </div>
-    </div>
-
-    <div class="ind-criteria">
-      <h3 data-i18n="ind.crit.title">Een goede indicator is...</h3>
-      <div class="crit-row"><div class="crit-icon">M</div><div><h4 data-i18n="ind.crit.m.h">Meeteenheid</h4><p data-i18n="ind.crit.m.p">Wat wordt er gemeten? Aantal, percentage, niveau, score.</p></div></div>
-      <div class="crit-row"><div class="crit-icon">R</div><div><h4 data-i18n="ind.crit.r.h">Relevant</h4><p data-i18n="ind.crit.r.p">Vertelt iets betekenisvols over het resultaat in de Theory of Change.</p></div></div>
-      <div class="crit-row"><div class="crit-icon">C</div><div><h4 data-i18n="ind.crit.c.h">Concreet</h4><p data-i18n="ind.crit.c.p">Scherp geformuleerd, niet multi-interpretabel — voor alle stakeholders helder.</p></div></div>
-      <div class="crit-row"><div class="crit-icon">H</div><div><h4 data-i18n="ind.crit.h.h">Haalbaar</h4><p data-i18n="ind.crit.h.p">Praktisch te meten — je hebt de juiste middelen om de data op te halen.</p></div></div>
+      <div class="ind-card">
+        <div class="ind-tag qual" data-i18n="ind.t.qual">Kwalitatief</div>
+        <h4 data-i18n="ind.ex2.h">Inwonertevredenheid over digitale dienstverlening</h4>
+        <p data-i18n="ind.ex2.p">Vangt perceptie en ervaring — diepte en kwaliteit van het resultaat, niet alleen volume.</p>
+        <div class="ind-example" data-i18n="ind.ex2.e">"Inwoners ervaren de dienstverlening als gebruiksvriendelijk."</div>
+      </div>
+      <div class="ind-card">
+        <div class="ind-tag qual-num" data-i18n="ind.t.qualnum">Kwalitatief gekwantificeerd</div>
+        <h4 data-i18n="ind.ex3.h">Tevredenheid op een schaal van 1–10</h4>
+        <p data-i18n="ind.ex3.p">Maakt kwalitatieve data vergelijkbaar door classificatieschalen — bijvoorbeeld een rapportcijfer of NPS-score.</p>
+        <div class="ind-example" data-i18n="ind.ex3.e">Gemiddeld 7,8 — boven streefwaarde van 7,5.</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ============ AI APPLICATIONS ============ -->
+<!-- ============ AI APPLICATIONS (rewired tabs) ============ -->
 <section class="ai" id="ai">
   <div class="shape-deco ai-shapes-1" id="aiShapes1" style="color:#FAFAF7"></div>
   <div class="shape-deco ai-shapes-2" id="aiShapes2" style="color:#FAFAF7"></div>
   <div class="ai-inner">
     <div class="section-label" data-i18n="ai.label">06 — Innovatieve dataverzameling</div>
     <h2 class="section-title display ai-section-title"><span data-i18n="ai.title.a">Slimme</span> <em data-i18n="ai.title.b">AI-toepassingen</em> <span data-i18n="ai.title.c">om data te verzamelen.</span></h2>
-    <p class="ai-intro" data-i18n="ai.intro">ADC heeft in diverse projecten big data gescraped en AI ingezet om beter zicht te krijgen op risico's, gedrag te monitoren en interventies te richten. Drie voorbeelden van toepassingen die laten zien hoe innovatieve dataverzameling impactgedreven werken kan versterken.</p>
+    <p class="ai-intro" data-i18n="ai.intro">ADC heeft in diverse projecten big data gescraped en AI ingezet om beter zicht te krijgen op risico's, gedrag te monitoren en interventies te richten. Drie voorbeelden:</p>
 
-    <div class="ai-grid" id="aiGrid"></div>
+    <div class="ai-tabs" id="aiTabs"></div>
+    <div id="aiPanels"></div>
   </div>
 </section>
 
-<!-- ============ EXAMPLES (3 cases, full impact model) ============ -->
+<!-- ============ EXAMPLES (3 cases, full impact model + indicators) ============ -->
 <section class="examples" id="examples">
   <div class="section-label" data-i18n="examples.label">07 — In de praktijk</div>
   <h2 class="section-title display"><span data-i18n="examples.title.a">Drie</span> <em data-i18n="examples.title.b">impactmodellen</em> <span data-i18n="examples.title.c">uit de praktijk.</span></h2>
-  <p style="max-width:65ch;font-size:17px;color:var(--ink-soft)" data-i18n="examples.intro">Klik op een voorbeeld om het volledige impactmodel uit te klappen — van impact via outcomes en outputs tot activiteiten, inclusief onderliggende aannames.</p>
+  <p style="max-width:65ch;font-size:17px;color:var(--ink-soft)" data-i18n="examples.intro">Klik op een voorbeeld om het volledige impactmodel + bijbehorende indicatoren uit te klappen.</p>
   <div id="examplesContainer"></div>
 </section>
 
-<!-- ============ CONTACT (GREEN) ============ -->
+<!-- ============ DASHBOARD ============ -->
+<section class="dashboard" id="dashboard">
+  <div class="shape-deco dash-shapes-1" id="dashShapes1"></div>
+  <div class="shape-deco dash-shapes-2" id="dashShapes2"></div>
+  <div class="dash-inner">
+    <div class="section-label" data-i18n="dash.label">08 — Sturen op impact</div>
+    <h2 class="section-title display dash-section-title"><span data-i18n="dash.title.a">Een</span> <em data-i18n="dash.title.b">dashboard</em> <span data-i18n="dash.title.c">dat impact tot leven brengt.</span></h2>
+    <p class="dash-intro" data-i18n="dash.intro">Een impactmodel komt pas écht tot leven als het stuurbaar wordt. In een dashboard koppel je elk niveau van je Theory of Change aan live indicatoren — zodat directie, beleid én uitvoering op hetzelfde beeld werken. Klik op een knoop om indicatoren te zien.</p>
+
+    <div class="dash-mockup">
+      <div class="dash-mockup-bar">
+        <span id="dashTitle">ACM Impactmodel — Markten werken goed voor alle mensen en bedrijven</span>
+        <div class="dots"><span></span><span></span><span></span></div>
+      </div>
+
+      <div class="dash-content">
+        <div class="dash-kpis" id="dashKpis"></div>
+        <div class="dash-overview">
+          <div class="dash-tree">
+            <h4 data-i18n="dash.tree.h">Impactmodel — klik op een knoop</h4>
+            <div id="dashTree"></div>
+          </div>
+          <div class="dash-detail" id="dashDetail"></div>
+        </div>
+        <div class="dash-legend">
+          <strong data-i18n="dash.legend.level">Niveau</strong>
+          <span><span class="dot" style="background:var(--ink)"></span><span data-i18n="dash.legend.impact">Impact</span></span>
+          <span><span class="dot" style="background:var(--green-deep)"></span><span data-i18n="dash.legend.outcome">Outcome</span></span>
+          <span><span class="dot" style="background:var(--lilac-deep)"></span><span data-i18n="dash.legend.suboutcome">Sub-outcome</span></span>
+          <span><span class="dot" style="background:var(--pink-deep)"></span><span data-i18n="dash.legend.output">Output</span></span>
+          <span><span class="dot" style="background:var(--amber)"></span><span data-i18n="dash.legend.activity">Activiteit</span></span>
+          <strong style="margin-left:24px" data-i18n="dash.legend.status">Status</strong>
+          <span><span class="dot" style="background:var(--status-good)"></span><span data-i18n="dash.legend.ontrack">On track</span></span>
+          <span><span class="dot" style="background:var(--status-risk)"></span><span data-i18n="dash.legend.atrisk">At risk</span></span>
+          <span><span class="dot" style="background:var(--status-bad)"></span><span data-i18n="dash.legend.behind">Behind</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-cta">
+      <div>
+        <h3 data-i18n="dash.cta.h">Een dashboard op maat voor jouw organisatie?</h3>
+        <p data-i18n="dash.cta.p">Wij bouwen impactdashboards die directie, beleidsmedewerkers en uitvoering verbinden — van Theory of Change tot live data.</p>
+      </div>
+      <a href="#contact" class="btn btn-light"><span data-i18n="dash.cta.btn">Praat met Timon</span> <span class="arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
 <section class="contact" id="contact">
   <div class="shape-deco contact-shapes" id="contactShapes" style="color:#FAFAF7"></div>
   <div class="contact-inner">
-    <div class="section-label" data-i18n="contact.label">08 — Aan de slag</div>
+    <div class="section-label" data-i18n="contact.label">09 — Aan de slag</div>
     <div class="contact-grid">
       <div>
         <p class="contact-cta display" data-i18n="contact.cta">Klaar om je impact zichtbaar te maken? Wij denken graag mee.</p>
@@ -645,10 +894,13 @@
       <div>
         <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px" data-i18n="contact.team">Jouw aanspreekpunt</h4>
         <div class="person">
-          <div class="person-name">Timon Domela</div>
-          <div class="person-role" data-i18n="contact.role">ADC — Public &amp; Society</div>
-          <a href="mailto:timon.d@adc-consulting.com">timon.d@adc-consulting.com</a>
-          <a href="https://adc-consulting.com/contact/" target="_blank" rel="noopener">adc-consulting.com/contact</a>
+          <div class="person-photo" id="timonPhoto"></div>
+          <div class="person-body">
+            <div class="person-name">Timon Domela</div>
+            <div class="person-role" data-i18n="contact.role">ADC — Public &amp; Society</div>
+            <a href="mailto:timon.d@adc-consulting.com">timon.d@adc-consulting.com</a>
+            <a href="https://adc-consulting.com/contact/" target="_blank" rel="noopener">adc-consulting.com/contact</a>
+          </div>
         </div>
       </div>
     </div>
@@ -688,6 +940,11 @@
 </footer>
 
 <script>
+// === EMBEDDED ASSETS ===
+const TIMON_PHOTO_B64 = "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";
+const DASHBOARD_DATA = {"title":"Markten werken goed voor alle mensen en bedrijven, nu en in de toekomst","nodes":[{"id":"impact-markten","type":"impact","label":"Markten werken goed voor alle mensen en bedrijven, nu en in de toekomst","description":"Het ultieme doel van de ACM: markten die goed functioneren voor iedereen.","indicators":[{"id":"ind-markten-compliance","label":"% onderzochte bedrijven in compliance","chartType":"line","unit":"%","currentValue":76,"targetValue":82,"progress":93,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":68},{"date":"2027-01-01","value":70},{"date":"2028-01-01","value":72},{"date":"2029-01-01","value":74},{"date":"2030-01-01","value":76}]}}]},{"id":"outcome-digitaal","type":"outcome","label":"De digitale economie wordt veiliger en eerlijker","description":"Hoofdoutcome Digitale Economie","indicators":[{"id":"ind-digitaal-score","label":"Score omgevingsanalyse digitale economie","chartType":"line","unit":"score","currentValue":2.1,"targetValue":7,"progress":30,"status":"behind","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":4},{"date":"2026-04-01","value":3.9},{"date":"2026-07-01","value":3.8},{"date":"2026-10-01","value":3.7},{"date":"2027-01-01","value":3.6},{"date":"2027-04-01","value":3.5},{"date":"2027-07-01","value":3.4},{"date":"2027-10-01","value":3.3},{"date":"2028-01-01","value":3.2},{"date":"2028-04-01","value":3.1},{"date":"2028-07-01","value":3},{"date":"2028-10-01","value":2.9},{"date":"2029-01-01","value":2.8},{"date":"2029-04-01","value":2.7},{"date":"2029-07-01","value":2.6},{"date":"2029-10-01","value":2.5},{"date":"2030-01-01","value":2.4},{"date":"2030-04-01","value":2.3},{"date":"2030-07-01","value":2.2},{"date":"2030-10-01","value":2.1}]}}]},{"id":"outcome-energie","type":"outcome","label":"De energietransitie en verduurzaming versnellen","description":"Hoofdoutcome Energie","indicators":[{"id":"ind-energie-co2","label":"Nederlandse CO2-uitstoot","chartType":"line","unit":"Mt","currentValue":150,"targetValue":130,"progress":33,"status":"behind","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":160},{"date":"2027-01-01","value":158},{"date":"2028-01-01","value":155},{"date":"2029-01-01","value":152},{"date":"2030-01-01","value":150}]}}]},{"id":"outcome-innovatie","type":"outcome","label":"Nederland is innovatiever en weerbaarder","description":"Hoofdoutcome Innovatie & Weerbaarheid","indicators":[{"id":"ind-innovatie-ranking","label":"Positie op Global Innovation Index","chartType":"bar","unit":"positie","currentValue":36,"targetValue":5,"progress":14,"status":"behind","data":{"type":"categorical","categories":[{"category":"Zwitserland","value":1},{"category":"Zweden","value":2},{"category":"VS","value":3},{"category":"VK","value":4},{"category":"Nederland","value":7},{"category":"Duitsland","value":8},{"category":"Frankrijk","value":11}]}}]},{"id":"suboutcome-eu-wetgeving","type":"suboutcome","label":"Naleving van EU-wetgeving beschermt mensen en bedrijven in het digitale domein","description":"Intermediair outcome: EU digitale wetgeving wordt nageleefd","indicators":[{"id":"ind-eu-gedragsverandering_veroordelingen","label":"% veroordelingen die tot gedragsverandering leiden (geen recidives)","chartType":"line","unit":"%","currentValue":30.2,"targetValue":75,"progress":40,"status":"behind","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":49.6},{"date":"2026-04-01","value":48.2},{"date":"2026-07-01","value":47.7},{"date":"2026-10-01","value":46.1},{"date":"2027-01-01","value":45.5},{"date":"2027-04-01","value":44},{"date":"2027-07-01","value":43.4},{"date":"2027-10-01","value":42},{"date":"2028-01-01","value":41.3},{"date":"2028-04-01","value":40.1},{"date":"2028-07-01","value":39.4},{"date":"2028-10-01","value":38},{"date":"2029-01-01","value":37.2},{"date":"2029-04-01","value":35.9},{"date":"2029-07-01","value":35.1},{"date":"2029-10-01","value":33.9},{"date":"2030-01-01","value":33},{"date":"2030-04-01","value":31.8},{"date":"2030-07-01","value":31},{"date":"2030-10-01","value":30.2}]}},{"id":"ind-eu-gedragsverandering_waarschuwingen","label":"% waarschuwingen die tot gedragsverandering leiden (geen recidives)","chartType":"line","unit":"%","currentValue":30.1,"targetValue":50,"progress":60,"status":"at-risk","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":44.2},{"date":"2026-04-01","value":43},{"date":"2026-07-01","value":42.8},{"date":"2026-10-01","value":41.7},{"date":"2027-01-01","value":41.2},{"date":"2027-04-01","value":40},{"date":"2027-07-01","value":39.7},{"date":"2027-10-01","value":38.6},{"date":"2028-01-01","value":38.1},{"date":"2028-04-01","value":37},{"date":"2028-07-01","value":36.8},{"date":"2028-10-01","value":35.6},{"date":"2029-01-01","value":35.2},{"date":"2029-04-01","value":34},{"date":"2029-07-01","value":33.7},{"date":"2029-10-01","value":32.6},{"date":"2030-01-01","value":32.2},{"date":"2030-04-01","value":31.2},{"date":"2030-07-01","value":30.9},{"date":"2030-10-01","value":30.1}]}},{"id":"ind-eu-gedragsverandering_consumenten","label":"% consumenten en aanbieders die overwegen uit een platform te stappen","chartType":"line","unit":"%","currentValue":7,"targetValue":5,"progress":140,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":7},{"date":"2026-04-01","value":7},{"date":"2026-07-01","value":7},{"date":"2026-10-01","value":7},{"date":"2027-01-01","value":7},{"date":"2027-04-01","value":7},{"date":"2027-07-01","value":7},{"date":"2027-10-01","value":7},{"date":"2028-01-01","value":7},{"date":"2028-04-01","value":7},{"date":"2028-07-01","value":7},{"date":"2028-10-01","value":7},{"date":"2029-01-01","value":7},{"date":"2029-04-01","value":7},{"date":"2029-07-01","value":7},{"date":"2029-10-01","value":7},{"date":"2030-01-01","value":7},{"date":"2030-04-01","value":7},{"date":"2030-07-01","value":7},{"date":"2030-10-01","value":7}]}}]},{"id":"suboutcome-mededinging","type":"suboutcome","label":"Naleving van mededingingsrecht zorgt voor eerlijke prijzen, keuzevrijheid & innovatie in het digitale domein","description":"Intermediair outcome: Mededingingsrecht zorgt voor eerlijke concurrentie"},{"id":"suboutcome-netcongestie","type":"suboutcome","label":"Verminderde netcongestie zorgt voor versnelling in de energietransitie","description":"Intermediair outcome: Minder netcongestie versnelt de energietransitie","indicators":[{"id":"ind-capaciteitstekort","label":"Geregistreerd netcapaciteitstekort","chartType":"line","unit":"MW","currentValue":3979,"targetValue":2500,"progress":40,"status":"behind","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":4985.5},{"date":"2026-02-01","value":4842.1},{"date":"2026-03-01","value":4878.6},{"date":"2026-04-01","value":4745},{"date":"2026-05-01","value":4886.7},{"date":"2026-06-01","value":4664},{"date":"2026-07-01","value":4809.7},{"date":"2026-08-01","value":4505},{"date":"2026-09-01","value":4524.8},{"date":"2026-10-01","value":4698.6},{"date":"2026-11-01","value":4677.7},{"date":"2026-12-01","value":4461.6},{"date":"2027-01-01","value":4441.3},{"date":"2027-02-01","value":4333.7},{"date":"2027-03-01","value":4520.1},{"date":"2027-04-01","value":4598},{"date":"2027-05-01","value":4529.5},{"date":"2027-06-01","value":4560.3},{"date":"2027-07-01","value":4210.5},{"date":"2027-08-01","value":4330.9},{"date":"2027-09-01","value":4492.1},{"date":"2027-10-01","value":4400.9},{"date":"2027-11-01","value":4119.2},{"date":"2027-12-01","value":4212},{"date":"2028-01-01","value":4378},{"date":"2028-02-01","value":4169.2},{"date":"2028-03-01","value":4085.8},{"date":"2028-04-01","value":4318.9},{"date":"2028-05-01","value":3988.8},{"date":"2028-06-01","value":3979}]}}]},{"id":"suboutcome-duurzame-energie","type":"suboutcome","label":"Toenemend gebruik van verantwoorde energie zorgt voor een verduurzaming van de economie","description":"Intermediair outcome: Meer verantwoorde energie verduurzaamt de economie","indicators":[{"id":"ind-verantwoorde-energie","label":"% duurzame energie in energiemix","chartType":"line","unit":"%","currentValue":35,"targetValue":38,"progress":92,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":21.9},{"date":"2026-04-01","value":20.2},{"date":"2026-07-01","value":23.7},{"date":"2026-10-01","value":23.6},{"date":"2027-01-01","value":25.4},{"date":"2027-04-01","value":25.5},{"date":"2027-07-01","value":27},{"date":"2027-10-01","value":24.6},{"date":"2028-01-01","value":28.3},{"date":"2028-04-01","value":28.8},{"date":"2028-07-01","value":29.8},{"date":"2028-10-01","value":27.2},{"date":"2029-01-01","value":30.5},{"date":"2029-04-01","value":31.5},{"date":"2029-07-01","value":32.3},{"date":"2029-10-01","value":32.3},{"date":"2030-01-01","value":34.4},{"date":"2030-04-01","value":33.2},{"date":"2030-07-01","value":35.5},{"date":"2030-10-01","value":35}]}}]},{"id":"suboutcome-concurreren","type":"suboutcome","label":"Nederlandse en Europese bedrijven kunnen concurreren met niet-Europese bedrijven","description":"Intermediair outcome: NL en EU bedrijven kunnen internationaal concurreren","indicators":[{"id":"ind-arbeidsproductiviteit","label":"Arbeidsproductiviteit vs EU","chartType":"bar","unit":"% EU","currentValue":100,"targetValue":110,"progress":91,"status":"on-track","data":{"type":"categorical","categories":[{"category":"Ierland","value":142},{"category":"België","value":115},{"category":"Nederland","value":106},{"category":"Frankrijk","value":104},{"category":"Duitsland","value":98},{"category":"EU Gemiddelde","value":100}]}}]},{"id":"suboutcome-veilig-online","type":"suboutcome","label":"Alle consumenten kunnen veilig online navigeren","description":"Intermediair outcome: Consumenten kunnen veilig online deelnemen","indicators":[{"id":"ind-veilig-online-gedrag","label":"% Data/AI veroordelingen met gedragsverandering","chartType":"line","unit":"%","currentValue":51.3,"targetValue":70,"progress":73,"status":"at-risk","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":39.1},{"date":"2026-04-01","value":37.8},{"date":"2026-07-01","value":40.4},{"date":"2026-10-01","value":38.8},{"date":"2027-01-01","value":40.8},{"date":"2027-04-01","value":40.5},{"date":"2027-07-01","value":41.5},{"date":"2027-10-01","value":43.9},{"date":"2028-01-01","value":42.1},{"date":"2028-04-01","value":43.8},{"date":"2028-07-01","value":43.6},{"date":"2028-10-01","value":46},{"date":"2029-01-01","value":45.2},{"date":"2029-04-01","value":47.9},{"date":"2029-07-01","value":48.8},{"date":"2029-10-01","value":49.4},{"date":"2030-01-01","value":48.1},{"date":"2030-04-01","value":48.1},{"date":"2030-07-01","value":50},{"date":"2030-10-01","value":51.3}]}}]},{"id":"output-uitspraken-eu","type":"output","label":"Uitspraak over mogelijke overtredingen van EU-wetgeving op digitale economie","description":"Uitspraken over overtredingen van EU digitale wetgeving","indicators":[{"id":"ind-uitspraken-veroordeling","label":"% overtredingen dat leidt tot interventie","chartType":"line","unit":"%","currentValue":84,"targetValue":80,"progress":105,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-06-30","value":72},{"date":"2026-12-31","value":72},{"date":"2027-06-30","value":74},{"date":"2027-12-31","value":76},{"date":"2028-06-30","value":77.5},{"date":"2028-12-31","value":79},{"date":"2029-06-30","value":80.5},{"date":"2029-12-31","value":82},{"date":"2030-06-30","value":83},{"date":"2030-12-31","value":84}]}},{"id":"ind-uitspraken-klachten","label":"% ernstige marktmeldingen (consumenten + bedrijven) dat door de ACM is behandeld en waarvan de onderliggende oorzaak is vastgesteld.","chartType":"line","unit":"%","currentValue":70,"targetValue":75,"progress":93,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":50},{"date":"2026-04-01","value":53.3},{"date":"2026-07-01","value":51.7},{"date":"2026-10-01","value":55},{"date":"2027-01-01","value":56.7},{"date":"2027-04-01","value":53.3},{"date":"2027-07-01","value":58.3},{"date":"2027-10-01","value":60},{"date":"2028-01-01","value":58.3},{"date":"2028-04-01","value":61.7},{"date":"2028-07-01","value":60},{"date":"2028-10-01","value":63.3},{"date":"2029-01-01","value":61.7},{"date":"2029-04-01","value":65},{"date":"2029-07-01","value":63.3},{"date":"2029-10-01","value":66.7},{"date":"2030-01-01","value":65},{"date":"2030-04-01","value":68.3},{"date":"2030-07-01","value":66.7},{"date":"2030-10-01","value":70}]}},{"id":"ind-uitspraken-media","label":"Media exposure","chartType":"bar","unit":"aantal","currentValue":2,"targetValue":4,"progress":50,"status":"at-risk","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":4},{"date":"2027-01-01","value":3},{"date":"2028-01-01","value":3},{"date":"2029-01-01","value":2},{"date":"2030-01-01","value":2}]}}]},{"id":"output-inzicht-misbruik","type":"output","label":"Inzicht in mogelijk misbruik van machtsposities","description":"Inzicht verkregen in mogelijk misbruik van marktmacht"},{"id":"output-sectorale-problemen","type":"output","label":"Sectorale markt problemen zijn bekend","description":"Marktproblemen in verschillende sectoren zijn geidentificeerd"},{"id":"output-energie-keuzes","type":"output","label":"Consumenten maken weloverwogen keuzes voor energie producten","description":"Consumenten kunnen geinformeerde keuzes maken over energieproducten","indicators":[{"id":"ind-prijsverschil-energie","label":"Gemiddeld prijsverschil energiekeuze","chartType":"line","unit":"EUR/jaar","currentValue":151.4,"targetValue":75,"progress":32,"status":"behind","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":187.1},{"date":"2026-02-01","value":186.9},{"date":"2026-03-01","value":187.7},{"date":"2026-04-01","value":185.7},{"date":"2026-05-01","value":184.2},{"date":"2026-06-01","value":184.5},{"date":"2026-07-01","value":173.8},{"date":"2026-08-01","value":179.6},{"date":"2026-09-01","value":169},{"date":"2026-10-01","value":177.5},{"date":"2026-11-01","value":176.1},{"date":"2026-12-01","value":176.4},{"date":"2027-01-01","value":176.2},{"date":"2027-02-01","value":168.4},{"date":"2027-03-01","value":173.2},{"date":"2027-04-01","value":173},{"date":"2027-05-01","value":171.1},{"date":"2027-06-01","value":165.1},{"date":"2027-07-01","value":163},{"date":"2027-08-01","value":164.2},{"date":"2027-09-01","value":156.2},{"date":"2027-10-01","value":167.2},{"date":"2027-11-01","value":158.1},{"date":"2027-12-01","value":159.2},{"date":"2028-01-01","value":156.6},{"date":"2028-02-01","value":151.5},{"date":"2028-03-01","value":151.7},{"date":"2028-04-01","value":158.5},{"date":"2028-05-01","value":147.9},{"date":"2028-06-01","value":151.4}]}}]},{"id":"output-netbeheerders","type":"output","label":"Netbeheerders weten hoe het stroomnet beter te benutten en te investeren in verbetering","description":"Netbeheerders hebben kennis over optimaal netgebruik en investeringen","indicators":[{"id":"ind-investeringsplannen","label":"% goedgekeurde investeringsplannen","chartType":"bar","unit":"%","currentValue":86,"targetValue":90,"progress":96,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":72},{"date":"2027-01-01","value":76},{"date":"2028-01-01","value":80},{"date":"2029-01-01","value":83},{"date":"2030-01-01","value":86}]}}]},{"id":"output-duurzame-keuze","type":"output","label":"Meer bedrijven kiezen voor duurzame energie","description":"Toename van bedrijven die kiezen voor duurzame energiebronnen","indicators":[{"id":"ind-hernieuwbare-bedrijven","label":"% bedrijven met >25% hernieuwbare energie","chartType":"bar","unit":"%","currentValue":28,"targetValue":50,"progress":56,"status":"at-risk","data":{"type":"categorical","categories":[{"category":"Industrie","value":28},{"category":"Zakelijke diensten","value":42},{"category":"Retail","value":22},{"category":"Transport","value":15},{"category":"Landbouw","value":35},{"category":"Gemiddeld","value":28}]}}]},{"id":"output-minder-drempels","type":"output","label":"Minder drempels voor innovatieve Nederlandse en Europese bedrijven","description":"Verlaagde drempels voor innovatieve bedrijven","indicators":[{"id":"ind-maatregelen-beleid","label":"% ACM-adviezen opgenomen in beleid","chartType":"bar","unit":"%","currentValue":64,"targetValue":70,"progress":91,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":42},{"date":"2027-01-01","value":48},{"date":"2028-01-01","value":55},{"date":"2029-01-01","value":60},{"date":"2030-01-01","value":64}]}}]},{"id":"output-data-ai","type":"output","label":"Bedrijven weten hoe verantwoord om te gaan met data en AI","description":"Bedrijven begrijpen verantwoord data- en AI-gebruik","indicators":[{"id":"ind-data-ai-veroordeling","label":"% Data/AI overtredingen met veroordeling","chartType":"bar","unit":"%","currentValue":32,"targetValue":65,"progress":49,"status":"behind","data":{"type":"categorical","categories":[{"category":"AI Act","value":22},{"category":"Data Act","value":28},{"category":"GDPR (data)","value":45},{"category":"DSA (algoritmes)","value":32},{"category":"Gemiddeld","value":32}]}}]},{"id":"output-webwinkels","type":"output","label":"Webwinkels weten hoe toegankelijk te zijn","description":"Webwinkels begrijpen toegankelijkheidseisen","indicators":[{"id":"ind-toegankelijkheid-maatregelen","label":"% toegankelijkheidsovertredingen met maatregel","chartType":"bar","unit":"%","currentValue":55,"targetValue":80,"progress":69,"status":"at-risk","data":{"type":"categorical","categories":[{"category":"Grote webwinkels","value":58},{"category":"MKB webwinkels","value":38},{"category":"Overheid","value":72},{"category":"Banken/verzekeraars","value":52},{"category":"Gemiddeld","value":55}]}}]},{"id":"act-snapchat","type":"activity","label":"Onderzoek maatregelen bescherming minderjarigen Snapchat","description":"Onderzoek naar maatregelen ter bescherming van minderjarigen door Snapchat vanwege illegale handel in vapes op het platform","indicators":[{"id":"ind-snapchat-overtredingen","label":"Geconstateerde overtredingen als gevolg van onderzoek","chartType":"bar","unit":"aantal","currentValue":13,"targetValue":8,"progress":163,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":0},{"date":"2026-04-01","value":0},{"date":"2026-07-01","value":1},{"date":"2026-10-01","value":2},{"date":"2027-01-01","value":3},{"date":"2027-04-01","value":4},{"date":"2027-07-01","value":5},{"date":"2027-10-01","value":6},{"date":"2028-01-01","value":6},{"date":"2028-04-01","value":7},{"date":"2028-07-01","value":8},{"date":"2028-10-01","value":8},{"date":"2029-01-01","value":9},{"date":"2029-04-01","value":10},{"date":"2029-07-01","value":10},{"date":"2029-10-01","value":11},{"date":"2030-01-01","value":11},{"date":"2030-04-01","value":12},{"date":"2030-07-01","value":12},{"date":"2030-10-01","value":13}]}}]},{"id":"act-lootboxes","type":"activity","label":"Europees onderzoek lootboxes en virtual currencies","description":"Europees onderzoek naar toepassing van lootboxes en virtual currencies door een internationale gameaanbieder","indicators":[{"id":"ind-lootboxes-overtredingen","label":"Overtredingen lootboxes","chartType":"bar","unit":"aantal","currentValue":13,"targetValue":12,"progress":108,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":0},{"date":"2026-04-01","value":0},{"date":"2026-07-01","value":1},{"date":"2026-10-01","value":2},{"date":"2027-01-01","value":3},{"date":"2027-04-01","value":4},{"date":"2027-07-01","value":5},{"date":"2027-10-01","value":6},{"date":"2028-01-01","value":6},{"date":"2028-04-01","value":7},{"date":"2028-07-01","value":8},{"date":"2028-10-01","value":8},{"date":"2029-01-01","value":9},{"date":"2029-04-01","value":10},{"date":"2029-07-01","value":10},{"date":"2029-10-01","value":11},{"date":"2030-01-01","value":11},{"date":"2030-04-01","value":12},{"date":"2030-07-01","value":12},{"date":"2030-10-01","value":13}]}}]},{"id":"act-dma","type":"activity","label":"Onderzoek naleving Digital Markets Act","description":"Onderzoek met de EC naar naleving van de Digital Markets Act door grote digitale platforms","indicators":[{"id":"ind-dma-overtredingen","label":"DMA overtredingen","chartType":"bar","unit":"aantal","currentValue":13,"targetValue":15,"progress":87,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":0},{"date":"2026-04-01","value":0},{"date":"2026-07-01","value":1},{"date":"2026-10-01","value":2},{"date":"2027-01-01","value":3},{"date":"2027-04-01","value":4},{"date":"2027-07-01","value":5},{"date":"2027-10-01","value":6},{"date":"2028-01-01","value":6},{"date":"2028-04-01","value":7},{"date":"2028-07-01","value":8},{"date":"2028-10-01","value":8},{"date":"2029-01-01","value":9},{"date":"2029-04-01","value":10},{"date":"2029-07-01","value":10},{"date":"2029-10-01","value":11},{"date":"2030-01-01","value":11},{"date":"2030-04-01","value":12},{"date":"2030-07-01","value":12},{"date":"2030-10-01","value":13}]}}]},{"id":"act-software","type":"activity","label":"Onderzoek misbruik machtspositie software leverancier","description":"Afronden onderzoek naar mogelijk concurrentiebeperkend misbruik van machtspositie door een internationale software leverancier","indicators":[{"id":"ind-software-overtredingen","label":"Overtredingen software leverancier geconstateerd","chartType":"bar","unit":"aantal","currentValue":13,"targetValue":5,"progress":260,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":0},{"date":"2026-04-01","value":0},{"date":"2026-07-01","value":1},{"date":"2026-10-01","value":2},{"date":"2027-01-01","value":3},{"date":"2027-04-01","value":4},{"date":"2027-07-01","value":5},{"date":"2027-10-01","value":6},{"date":"2028-01-01","value":6},{"date":"2028-04-01","value":7},{"date":"2028-07-01","value":8},{"date":"2028-10-01","value":8},{"date":"2029-01-01","value":9},{"date":"2029-04-01","value":10},{"date":"2029-07-01","value":10},{"date":"2029-10-01","value":11},{"date":"2030-01-01","value":11},{"date":"2030-04-01","value":12},{"date":"2030-07-01","value":12},{"date":"2030-10-01","value":13}]}}]},{"id":"act-bol","type":"activity","label":"Onderzoek gedragingen online platform bol","description":"Afronden onderzoek naar gedragingen van online verkoop platform bol","indicators":[{"id":"ind-bol-overtredingen","label":"Overtredingen bol.com onderzoek","chartType":"bar","unit":"aantal","currentValue":13,"targetValue":6,"progress":217,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":0},{"date":"2026-04-01","value":0},{"date":"2026-07-01","value":1},{"date":"2026-10-01","value":2},{"date":"2027-01-01","value":3},{"date":"2027-04-01","value":4},{"date":"2027-07-01","value":5},{"date":"2027-10-01","value":6},{"date":"2028-01-01","value":6},{"date":"2028-04-01","value":7},{"date":"2028-07-01","value":8},{"date":"2028-10-01","value":8},{"date":"2029-01-01","value":9},{"date":"2029-04-01","value":10},{"date":"2029-07-01","value":10},{"date":"2029-10-01","value":11},{"date":"2030-01-01","value":11},{"date":"2030-04-01","value":12},{"date":"2030-07-01","value":12},{"date":"2030-10-01","value":13}]}}]},{"id":"act-computer-prijzen","type":"activity","label":"Publiceren bevindingen computergestuurde prijzen","description":"Publiceren bevindingen over computergestuurde prijzen, aanbod van lage internetsnelheden en digitale leermiddelen","indicators":[{"id":"ind-computer-prijzen-overtredingen","label":"Overtredingen computergestuurde prijzen","chartType":"bar","unit":"aantal","currentValue":13,"targetValue":8,"progress":163,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":0},{"date":"2026-04-01","value":0},{"date":"2026-07-01","value":1},{"date":"2026-10-01","value":2},{"date":"2027-01-01","value":3},{"date":"2027-04-01","value":4},{"date":"2027-07-01","value":5},{"date":"2027-10-01","value":6},{"date":"2028-01-01","value":6},{"date":"2028-04-01","value":7},{"date":"2028-07-01","value":8},{"date":"2028-10-01","value":8},{"date":"2029-01-01","value":9},{"date":"2029-04-01","value":10},{"date":"2029-07-01","value":10},{"date":"2029-10-01","value":11},{"date":"2030-01-01","value":11},{"date":"2030-04-01","value":12},{"date":"2030-07-01","value":12},{"date":"2030-10-01","value":13}]}}]},{"id":"act-energie-producten","type":"activity","label":"Marktonderzoek energie producten","description":"Marktonderzoek energie producten naar verbeteringen begrijpelijkheid & versimpelen van overstappen","indicators":[{"id":"ind-energie-verbeteringen","label":"Doorgevoerde verbeteringen energiemarkt","chartType":"bar","unit":"aantal","currentValue":18,"targetValue":18,"progress":100,"status":"on-track","data":{"type":"categorical","categories":[{"category":"Transparantie tarieven","value":5},{"category":"Overstapproces","value":4},{"category":"Vergelijkingssites","value":6},{"category":"Klachtafhandeling","value":3}]}}]},{"id":"act-garantie","type":"activity","label":"Onderzoek & voorlichting garantie, reparatie & levensduur","description":"Onderzoek & voorlichting garantie, reparatie & levensduur","indicators":[{"id":"ind-garantie-bereik","label":"Bereik voorlichting garantie & reparatie","chartType":"pie","unit":"%","currentValue":33.3,"targetValue":45,"progress":22,"status":"behind","data":{"type":"categorical","categories":[{"category":"Goed bereikt","value":22},{"category":"Deels bereikt","value":28},{"category":"Niet bereikt","value":50}]}}]},{"id":"act-dashboard-congestie","type":"activity","label":"Dashboard voortgang netcongestie maatregelen","description":"Presenteren van een dashboard met voortgang op netcongestie maatregelen","indicators":[{"id":"ind-dashboard-gebruik","label":"Gebruik netcongestie dashboard","chartType":"pie","unit":"%","currentValue":25,"targetValue":95,"progress":105,"status":"on-track","data":{"type":"categorical","categories":[{"category":"Dagelijks gebruik","value":45},{"category":"Wekelijks gebruik","value":30},{"category":"Incidenteel","value":18},{"category":"Geen gebruik","value":7}]}}]},{"id":"act-reguleringskader","type":"activity","label":"Nieuw reguleringskader nettarieven","description":"Vaststellen nieuw reguleringskader voor nettarieven van beheerders van het gas- en elektriciteitsnet","indicators":[{"id":"ind-reguleringskader-implementatie","label":"Implementatie nieuw reguleringskader","chartType":"line","unit":"%","currentValue":86.8,"targetValue":100,"progress":87,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":9},{"date":"2026-04-01","value":14.4},{"date":"2026-07-01","value":17.6},{"date":"2026-10-01","value":22.6},{"date":"2027-01-01","value":26.4},{"date":"2027-04-01","value":29.6},{"date":"2027-07-01","value":34.4},{"date":"2027-10-01","value":39.2},{"date":"2028-01-01","value":42.3},{"date":"2028-04-01","value":46.9},{"date":"2028-07-01","value":49.5},{"date":"2028-10-01","value":55.5},{"date":"2029-01-01","value":59.8},{"date":"2029-04-01","value":63.5},{"date":"2029-07-01","value":66.1},{"date":"2029-10-01","value":71.6},{"date":"2030-01-01","value":73.3},{"date":"2030-04-01","value":78.5},{"date":"2030-07-01","value":81.1},{"date":"2030-10-01","value":86.8}]}}]},{"id":"act-warmtenetten","type":"activity","label":"Uitwerken waardebepaling warmtenetten","description":"Uitwerken waardebepaling warmtenetten, kosten gebaseerde warmtetarieven & fin. rendement warmteleveranciers","indicators":[{"id":"ind-warmte-verbruikers","label":"Verbruikers boven kostengebaseerd tarief","chartType":"line","unit":"x1000","currentValue":249.8,"targetValue":100,"progress":31,"status":"behind","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":318.2},{"date":"2026-04-01","value":307.8},{"date":"2026-07-01","value":313.9},{"date":"2026-10-01","value":299.2},{"date":"2027-01-01","value":299.9},{"date":"2027-04-01","value":298.9},{"date":"2027-07-01","value":303.2},{"date":"2027-10-01","value":299.3},{"date":"2028-01-01","value":294.1},{"date":"2028-04-01","value":281.9},{"date":"2028-07-01","value":283.2},{"date":"2028-10-01","value":270.6},{"date":"2029-01-01","value":267.5},{"date":"2029-04-01","value":264.9},{"date":"2029-07-01","value":260.1},{"date":"2029-10-01","value":257.4},{"date":"2030-01-01","value":262.6},{"date":"2030-04-01","value":255.6},{"date":"2030-07-01","value":248},{"date":"2030-10-01","value":249.8}]}}]},{"id":"act-verantwoord-ondernemen","type":"activity","label":"Voorbereiden toezicht EU regels verantwoord ondernemen","description":"Voorbereiden toezicht EU regels internationaal verantwoord ondernemen","indicators":[{"id":"ind-verantwoord-taakstelling","label":"Voortgang taakstelling IMVO toezicht","chartType":"line","unit":"%","currentValue":63.8,"targetValue":75,"progress":85,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":11.8},{"date":"2026-04-01","value":14.7},{"date":"2026-07-01","value":17.7},{"date":"2026-10-01","value":20.6},{"date":"2027-01-01","value":23.8},{"date":"2027-04-01","value":26.1},{"date":"2027-07-01","value":28.2},{"date":"2027-10-01","value":31.1},{"date":"2028-01-01","value":34.4},{"date":"2028-04-01","value":37.4},{"date":"2028-07-01","value":40.6},{"date":"2028-10-01","value":43.7},{"date":"2029-01-01","value":45},{"date":"2029-04-01","value":48.5},{"date":"2029-07-01","value":53},{"date":"2029-10-01","value":53.5},{"date":"2030-01-01","value":55.6},{"date":"2030-04-01","value":60.3},{"date":"2030-07-01","value":59.6},{"date":"2030-10-01","value":63.8}]}}]},{"id":"act-ronde-tafel","type":"activity","label":"Ronde tafel bijeenkomsten","description":"Opzet ronde tafel bijeenkomsten voor bedrijven, overheden en belangenorganisaties","indicators":[{"id":"ind-ronde-tafel-deelnemers","label":"Deelnemers ronde tafel per categorie","chartType":"pie","unit":"organisaties","currentValue":92,"targetValue":100,"progress":92,"status":"on-track","data":{"type":"categorical","categories":[{"category":"Bedrijven","value":38},{"category":"Overheid","value":18},{"category":"NGOs","value":14},{"category":"Wetenschap","value":10},{"category":"Brancheverenigingen","value":12}]}}]},{"id":"act-cloud","type":"activity","label":"Onderzoek stimuleren NL & EU cloud sector","description":"Onderzoek naar stimuleren NL & EU cloud sector","indicators":[{"id":"ind-cloud-verbetermaatregelen","label":"Verbetermaatregelen cloud sector","chartType":"bar","unit":"aantal","currentValue":8,"targetValue":12,"progress":67,"status":"at-risk","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":1},{"date":"2026-04-01","value":1},{"date":"2026-07-01","value":2},{"date":"2026-10-01","value":2},{"date":"2027-01-01","value":3},{"date":"2027-04-01","value":3},{"date":"2027-07-01","value":4},{"date":"2027-10-01","value":4},{"date":"2028-01-01","value":4},{"date":"2028-04-01","value":5},{"date":"2028-07-01","value":5},{"date":"2028-10-01","value":5},{"date":"2029-01-01","value":6},{"date":"2029-04-01","value":6},{"date":"2029-07-01","value":7},{"date":"2029-10-01","value":7},{"date":"2030-01-01","value":7},{"date":"2030-04-01","value":8},{"date":"2030-07-01","value":8},{"date":"2030-10-01","value":8}]}}]},{"id":"act-innovatie-concurrentie","type":"activity","label":"Meewegen innovatie bij concurrentiebeoordeling","description":"Meewegen innovatie & weerbaarheid bij beoordeling concurrentie","indicators":[{"id":"ind-innovatie-beoordelingen","label":"Concurrentiebeoordelingen met innovatie-aspect","chartType":"bar","unit":"aantal","currentValue":27,"targetValue":28,"progress":96,"status":"on-track","data":{"type":"timeseries","points":[{"date":"2026-01-01","value":4},{"date":"2026-04-01","value":5},{"date":"2026-07-01","value":6},{"date":"2026-10-01","value":7},{"date":"2027-01-01","value":8},{"date":"2027-04-01","value":10},{"date":"2027-07-01","value":11},{"date":"2027-10-01","value":12},{"date":"2028-01-01","value":14},{"date":"2028-04-01","value":15},{"date":"2028-07-01","value":16},{"date":"2028-10-01","value":18},{"date":"2029-01-01","value":19},{"date":"2029-04-01","value":20},{"date":"2029-07-01","value":21},{"date":"2029-10-01","value":23},{"date":"2030-01-01","value":24},{"date":"2030-04-01","value":25},{"date":"2030-07-01","value":26},{"date":"2030-10-01","value":27}]}}]},{"id":"act-data-act","type":"activity","label":"Uitwerken & voorlichten Data Act","description":"Uitwerken & voorlichten nieuw toezichtregime voor toegang tot data (Data Act)","indicators":[{"id":"ind-data-act-bereik","label":"Bereik voorlichting Data Act","chartType":"pie","unit":"%","currentValue":33.3,"targetValue":50,"progress":12,"status":"behind","data":{"type":"categorical","categories":[{"category":"Goed geinformeerd","value":12},{"category":"Basis kennis","value":22},{"category":"Niet bereikt","value":66}]}}]},{"id":"act-ai-chatbots","type":"activity","label":"Voorlichting bedrijven AI-chatbots","description":"Voorlichting bedrijven inzet AI-chatbots (met AP)","indicators":[{"id":"ind-ai-chatbots-bereik","label":"Bereik voorlichting AI-chatbots","chartType":"pie","unit":"%","currentValue":25,"targetValue":45,"progress":18,"status":"behind","data":{"type":"categorical","categories":[{"category":"Volledig compliant","value":18},{"category":"In aanpassing","value":25},{"category":"Niet compliant","value":35},{"category":"Onbekend","value":22}]}}]},{"id":"act-toegankelijkheid","type":"activity","label":"Voorlichting toegankelijkheidseisen webwinkels","description":"Voorlichting toegankelijkheidseisen webwinkels","indicators":[{"id":"ind-webwinkels-bereik","label":"Bereik toegankelijkheidseisen webwinkels","chartType":"pie","unit":"%","currentValue":25,"targetValue":65,"progress":35,"status":"behind","data":{"type":"categorical","categories":[{"category":"Volledig compliant","value":35},{"category":"Grotendeels compliant","value":28},{"category":"In aanpassing","value":22},{"category":"Niet compliant","value":15}]}}]}],"edges":[{"id":"edge-0","source":"outcome-digitaal","target":"impact-markten","label":"Aanname 5","assumption":"De belangrijkste marktbelemmeringen vinden plaats in de digitale en energie sector"},{"id":"edge-1","source":"outcome-energie","target":"impact-markten"},{"id":"edge-2","source":"outcome-innovatie","target":"impact-markten"},{"id":"edge-3","source":"suboutcome-eu-wetgeving","target":"outcome-digitaal"},{"id":"edge-4","source":"suboutcome-mededinging","target":"outcome-digitaal"},{"id":"edge-5","source":"suboutcome-netcongestie","target":"outcome-energie"},{"id":"edge-6","source":"suboutcome-duurzame-energie","target":"outcome-energie"},{"id":"edge-7","source":"suboutcome-concurreren","target":"outcome-innovatie","label":"Aanname 6"},{"id":"edge-8","source":"suboutcome-veilig-online","target":"outcome-innovatie"},{"id":"edge-9","source":"output-uitspraken-eu","target":"suboutcome-eu-wetgeving","label":"Aanname 1","assumption":"Juridische maatregelen leiden tot gedragsverandering bij spelers in het digitale domein"},{"id":"edge-10","source":"output-inzicht-misbruik","target":"suboutcome-mededinging","label":"Aanname 3","assumption":"Eventueel geconstateerd machtsmisbruik kan verboden worden op basis van bestaand mededingingsrecht"},{"id":"edge-11","source":"output-sectorale-problemen","target":"suboutcome-mededinging"},{"id":"edge-12","source":"output-energie-keuzes","target":"suboutcome-duurzame-energie"},{"id":"edge-13","source":"output-netbeheerders","target":"suboutcome-netcongestie"},{"id":"edge-14","source":"output-duurzame-keuze","target":"suboutcome-duurzame-energie"},{"id":"edge-15","source":"output-minder-drempels","target":"suboutcome-concurreren","label":"Aanname 6","assumption":"Het wegnemen van drempels is genoeg om te kunnen concurreren"},{"id":"edge-16","source":"output-data-ai","target":"suboutcome-veilig-online"},{"id":"edge-17","source":"output-webwinkels","target":"suboutcome-veilig-online"},{"id":"edge-18","source":"act-snapchat","target":"output-uitspraken-eu"},{"id":"edge-19","source":"act-lootboxes","target":"output-uitspraken-eu"},{"id":"edge-20","source":"act-dma","target":"output-uitspraken-eu","label":"Aanname 2","assumption":"Onderzoek levert genoeg materiaal op om tot uitspraken te komen"},{"id":"edge-21","source":"act-software","target":"output-inzicht-misbruik"},{"id":"edge-22","source":"act-bol","target":"output-inzicht-misbruik"},{"id":"edge-23","source":"act-computer-prijzen","target":"output-sectorale-problemen"},{"id":"edge-24","source":"act-energie-producten","target":"output-energie-keuzes","label":"Aanname 4","assumption":"Met de juiste kennis maken consumenten de juiste keuzes"},{"id":"edge-25","source":"act-garantie","target":"output-energie-keuzes"},{"id":"edge-26","source":"act-dashboard-congestie","target":"output-netbeheerders"},{"id":"edge-27","source":"act-reguleringskader","target":"output-netbeheerders"},{"id":"edge-28","source":"act-warmtenetten","target":"output-duurzame-keuze"},{"id":"edge-29","source":"act-verantwoord-ondernemen","target":"output-duurzame-keuze"},{"id":"edge-30","source":"act-ronde-tafel","target":"output-minder-drempels"},{"id":"edge-31","source":"act-cloud","target":"output-minder-drempels"},{"id":"edge-32","source":"act-innovatie-concurrentie","target":"output-minder-drempels"},{"id":"edge-33","source":"act-data-act","target":"output-data-ai"},{"id":"edge-34","source":"act-ai-chatbots","target":"output-data-ai"},{"id":"edge-35","source":"act-toegankelijkheid","target":"output-webwinkels"},{"id":"edge-36","source":"act-dma","target":"output-inzicht-misbruik","label":"DMA onderzoek geeft ook inzicht in misbruik machtspositie"}]};
+
+
 // ============ DATA ============
 const DATA = {
   pillars: [
@@ -721,25 +978,29 @@ const DATA = {
     {
       num:'01',
       title:{nl:'Bouw je impactmodel', en:'Build your impact model'},
-      desc:{nl:'Beschrijf en visualiseer hoe gewenste impact ontstaat via een logische keten van resultaten — van activiteiten via outputs en outcomes tot impact. Dit is de basis voor alles wat volgt.', en:'Describe and visualise how desired impact is achieved through a logical sequence of results — from activities via outputs and outcomes to impact. This is the foundation for everything that follows.'},
+      short:{nl:'Beschrijf en visualiseer hoe gewenste impact ontstaat via een logische keten van resultaten.', en:'Describe and visualise how desired impact is achieved through a logical chain of results.'},
+      detail:{nl:'Van activiteiten via outputs en outcomes tot impact — dit is de basis voor alles wat volgt.', en:'From activities via outputs and outcomes to impact — this is the foundation.'},
       bullets:{nl:['Visie en impactstellingen scherp formuleren','Causale keten in kaart brengen','Onderliggende aannames expliciet maken','Afbakenen wat onder controle, invloed en belang valt'],en:['Sharp formulation of vision and impact statements','Mapping the causal chain','Making underlying assumptions explicit','Distinguishing control, influence and interest']}
     },
     {
       num:'02',
       title:{nl:'Definieer het meetkader', en:'Define the measurement framework'},
-      desc:{nl:'Op basis van de logica van het impactmodel formuleren we gerichte indicatoren — kwantitatief én kwalitatief, scherp en haalbaar. Geen losse datapunten, maar een samenhangend meetkader.', en:'Based on the logic of the impact model, we define targeted indicators — quantitative and qualitative, sharp and feasible. No scattered data points, but a coherent framework.'},
+      short:{nl:'Op basis van de logica van het impactmodel formuleren we gerichte indicatoren.', en:'Based on the logic of the impact model, we define targeted indicators.'},
+      detail:{nl:'Kwantitatief én kwalitatief, scherp en haalbaar — geen losse datapunten, maar een samenhangend meetkader.', en:'Quantitative and qualitative, sharp and feasible — no scattered data points, but a coherent framework.'},
       bullets:{nl:['Indicatoren per niveau (impact → activiteit)','Combinatie kwantitatief/kwalitatief','SMART-toets per indicator','Meetplan per indicator: bron, frequentie, actie'],en:['Indicators per level (impact → activity)','Quantitative + qualitative mix','SMART check per indicator','Measurement plan: source, frequency, action']}
     },
     {
       num:'03',
       title:{nl:'Tools & processen inrichten', en:'Set up tools and processes'},
-      desc:{nl:'Automatisering van data, dashboards, governance en de juiste skills bij teams — zodat data ook echt landt in besluitvorming. Inclusief inzet van slimme AI-toepassingen voor dataverzameling.', en:'Automation of data, dashboards, governance and team skills — so data actually lands in decision-making. Including smart AI tools for data collection.'},
+      short:{nl:'Automatisering van data, dashboards, governance en de juiste skills bij teams.', en:'Automation of data, dashboards, governance and team skills.'},
+      detail:{nl:'Zodat data ook echt landt in besluitvorming. Inclusief inzet van slimme AI-toepassingen voor dataverzameling waar relevant.', en:'So that data actually lands in decision-making. Including smart AI tools for data collection where relevant.'},
       bullets:{nl:['(Realtime) dashboards en data-pipelines','Data governance en bronkeuze','Skills & capacity bij teams','AI/ML voor monitoring waar relevant'],en:['(Realtime) dashboards and data pipelines','Data governance and source selection','Skills & capacity in teams','AI/ML for monitoring where relevant']}
     },
     {
       num:'04',
       title:{nl:'Meten, leren, bijsturen', en:'Measure, learn, adjust'},
-      desc:{nl:'Een continue cyclus van meten, leren en aanpassen — indicatoren tweaken, methoden herzien, of zelfs strategische doelen heroverwegen. Geen eenmalige exercitie, maar een manier van werken.', en:'A continuous cycle of measuring, learning and adjusting — tweaking indicators, revising methods, or even rethinking strategic goals. Not a one-off exercise, but a way of working.'},
+      short:{nl:'Een continue cyclus van meten, leren en aanpassen.', en:'A continuous cycle of measuring, learning and adjusting.'},
+      detail:{nl:'Indicatoren tweaken, methoden herzien, of zelfs strategische doelen heroverwegen — geen eenmalige exercitie maar een manier van werken.', en:'Tweaking indicators, revising methods, or even rethinking strategic goals — not a one-off but a way of working.'},
       bullets:{nl:['Periodieke evaluatie & herijking','Aannames toetsen tegen de praktijk','Strategische bijsturing op basis van data','Continue verbetering van het meetkader'],en:['Periodic evaluation & recalibration','Test assumptions against practice','Strategic adjustment based on data','Continuous improvement of the framework']}
     }
   ],
@@ -785,7 +1046,7 @@ const DATA = {
       title:{nl:'Risicomodel op basis van historische claims + externe ESG-data',en:'Risk model based on historical claims + external ESG data'},
       input:{nl:'Historische claimsdata, portefeuilledata, externe databronnen zoals overstromingsrisico\'s en energielabels.',en:'Historical claims data, portfolio data, external sources such as flood risk and energy labels.'},
       model:{nl:'Model dat claimkans en risicoprofielen voorspelt.',en:'Model that predicts claim probability and risk profiles.'},
-      value:{nl:'Betere segmentatie, gerichtere pricing/interventies, beter begrip van risicoprofielen.',en:'Better segmentation, more targeted pricing/interventions, deeper understanding of risk profiles.'},
+      value:{nl:'Betere segmentatie, gerichtere pricing en interventies, beter begrip van risicoprofielen.',en:'Better segmentation, more targeted pricing/interventions, deeper understanding of risk profiles.'},
       relevance:{nl:'Toont hoe interne en externe databronnen gecombineerd kunnen worden om marktpartijen of situaties in risicobuckets in te delen.',en:'Shows how internal and external data sources can be combined to bucket market actors or situations by risk.'}
     },
     {
@@ -794,7 +1055,7 @@ const DATA = {
       input:{nl:'Webdata via crawling/scraping, bestaande labels van initiatieven, tekstuele informatie over merken.',en:'Web data via crawling/scraping, existing initiative labels, textual brand information.'},
       model:{nl:'Supervised text classification om ratings te voorspellen voor niet-gelabelde merken.',en:'Supervised text classification to predict ratings for unlabelled brands.'},
       value:{nl:'Schaalbare marktmonitoring op basis van publieke online informatie.',en:'Scalable market monitoring based on public online information.'},
-      relevance:{nl:'Zeer vergelijkbaar met toezicht in de digitale economie, waar online publieke data kan worden gebruikt om gedrag, claims of risico\'s op platformen/markten systematisch te monitoren.',en:'Highly comparable to oversight in the digital economy, where public online data can be used to systematically monitor behaviour, claims or risks on platforms/markets.'}
+      relevance:{nl:'Vergelijkbaar met toezicht in de digitale economie, waar online publieke data kan worden gebruikt om gedrag, claims of risico\'s op platformen systematisch te monitoren.',en:'Comparable to oversight in the digital economy, where public online data can be used to systematically monitor behaviour, claims or risks on platforms.'}
     },
     {
       tag:{nl:'Payment Service Provider',en:'Payment Service Provider'},
@@ -812,35 +1073,37 @@ const DATA = {
       title:{nl:'Digitale geletterdheid',en:'Digital literacy'},
       vision:{nl:'Een digitaal vaardige samenleving waarin iedereen kan meedoen.',en:'A digitally skilled society in which everyone can participate.'},
       impact:{nl:'Inwoners beschikken over digitale basisvaardigheden om gebruik te maken van digitale overheidsdiensten en dagelijkse digitale toepassingen.',en:'Residents have basic digital skills to use government services and daily digital applications.'},
-      outcomes:[
-        {nl:'Inwoners met basisvaardigheden-achterstand doen nieuwe digitale vaardigheden op tijdens onze programma\'s.',en:'Residents with skill gaps acquire new digital skills during our programmes.'}
-      ],
-      outputs:[
-        {nl:'We bereiken alle inwoners met basisvaardigheden-achterstand.',en:'We reach all residents with basic skill gaps.'}
-      ],
-      activities:[
-        {nl:'We ontwikkelen wijkvestigingen tot volwaardige bibliotheekvoorzieningen.',en:'We develop neighbourhood branches into full library facilities.'}
-      ],
-      assumption:{nl:'Via de huidige kanalen bereiken we niet de gehele doelgroep. Daarom moeten we meer zichtbaar zijn in de wijk.',en:'Our current channels don\'t reach the full target group. We need stronger neighbourhood visibility.'}
+      outcomes:[{nl:'Inwoners met basisvaardigheden-achterstand doen nieuwe digitale vaardigheden op tijdens onze programma\'s.',en:'Residents with skill gaps acquire new digital skills during our programmes.'}],
+      outputs:[{nl:'We bereiken alle inwoners met basisvaardigheden-achterstand.',en:'We reach all residents with basic skill gaps.'}],
+      activities:[{nl:'We ontwikkelen wijkvestigingen tot volwaardige bibliotheekvoorzieningen.',en:'We develop neighbourhood branches into full library facilities.'}],
+      assumption:{nl:'Via de huidige kanalen bereiken we niet de gehele doelgroep. Daarom moeten we meer zichtbaar zijn in de wijk.',en:'Our current channels don\'t reach the full target group. We need stronger neighbourhood visibility.'},
+      indicators:[
+        {level:'impact',title:{nl:'% inwoners met digitale basisvaardigheden',en:'% residents with basic digital skills'},meta:{nl:'Bron: CBS digitale-vaardigheden-monitor · jaarlijks',en:'Source: national digital skills monitor · annual'},type:{nl:'Kwantitatief',en:'Quantitative'}},
+        {level:'outcomes',title:{nl:'Aantal nieuwe digitale vaardigheden per deelnemer',en:'New digital skills acquired per participant'},meta:{nl:'Voor- en nameting · per programma-cyclus',en:'Pre/post-test · per programme cycle'},type:{nl:'Kwantitatief',en:'Quantitative'}},
+        {level:'outputs',title:{nl:'Bereik onder doelgroep met basisvaardigheden-achterstand',en:'Reach among target group with skill gaps'},meta:{nl:'Inschrijvingen + wijkanalyse · per kwartaal',en:'Sign-ups + neighbourhood analysis · quarterly'},type:{nl:'Kwantitatief',en:'Quantitative'}},
+        {level:'activities',title:{nl:'Tevredenheid bezoekers wijkbibliotheek (1–10)',en:'Visitor satisfaction neighbourhood library (1–10)'},meta:{nl:'Bezoekersenquête · maandelijks',en:'Visitor survey · monthly'},type:{nl:'Kwalitatief gekwantificeerd',en:'Qualitative quantified'}}
+      ]
     },
     {
       tag:{nl:'Werk & inkomen',en:'Work & income'},
       title:{nl:'Re-integratie',en:'Re-integration'},
       vision:{nl:'Een inclusieve arbeidsmarkt waarin iedereen naar vermogen meedoet.',en:'An inclusive labour market where everyone participates to their ability.'},
       impact:{nl:'Inwoners met een bijstandsuitkering participeren naar vermogen.',en:'Welfare recipients participate to the best of their ability.'},
-      outcomes:[
-        {nl:'Inwoners die binnen 3 jaar aan het werk kunnen, maken gebruik van een passende re-integratie-regeling.',en:'Residents able to work within 3 years use a suitable re-integration scheme.'}
-      ],
+      outcomes:[{nl:'Inwoners die binnen 3 jaar aan het werk kunnen, maken gebruik van een passende re-integratie-regeling.',en:'Residents able to work within 3 years use a suitable re-integration scheme.'}],
       outputs:[
-        {nl:'Er is inzicht in de behoefte aan integratievoorzieningen van inwoners met een bijstandsuitkering.',en:'There is insight into the need for integration services among welfare recipients.'},
+        {nl:'Er is inzicht in de behoefte aan integratievoorzieningen.',en:'There is insight into the need for integration services.'},
         {nl:'Er is een passend scholingsaanbod beschikbaar.',en:'A suitable training offer is available.'},
-        {nl:'Inwoners zijn door consulenten doorverwezen naar passende voorzieningen.',en:'Residents have been referred by case workers to suitable services.'},
+        {nl:'Inwoners zijn doorverwezen naar passende voorzieningen.',en:'Residents have been referred to suitable services.'},
         {nl:'Consulenten informeren over beschikbare regelingen.',en:'Case workers inform about available schemes.'}
       ],
-      activities:[
-        {nl:'Onderzoek naar integratiebehoefte van inwoners met een bijstandsuitkering.',en:'Research into the integration needs of welfare recipients.'}
-      ],
-      assumption:{nl:'Werkgevers uit de regio bieden passende banen aan; consulenten weten hoe ze de juiste diagnose stellen.',en:'Regional employers offer suitable jobs; case workers can make accurate diagnoses.'}
+      activities:[{nl:'Onderzoek naar integratiebehoefte van inwoners met een bijstandsuitkering.',en:'Research into the integration needs of welfare recipients.'}],
+      assumption:{nl:'Werkgevers uit de regio bieden passende banen aan; consulenten weten hoe ze de juiste diagnose stellen.',en:'Regional employers offer suitable jobs; case workers can make accurate diagnoses.'},
+      indicators:[
+        {level:'impact',title:{nl:'% bijstandsontvangers dat naar vermogen participeert',en:'% welfare recipients participating to ability'},meta:{nl:'Combinatie CBS-data + lokaal cliëntdossier · jaarlijks',en:'CBS data + local case files · annual'},type:{nl:'Kwantitatief',en:'Quantitative'}},
+        {level:'outcomes',title:{nl:'% gebruik passende re-integratieregeling binnen doelgroep',en:'% suitable scheme uptake in target group'},meta:{nl:'Cliëntdossiers · per kwartaal',en:'Case files · quarterly'},type:{nl:'Kwantitatief',en:'Quantitative'}},
+        {level:'outputs',title:{nl:'Aantal scholingsplekken beschikbaar per regio',en:'Training spots available per region'},meta:{nl:'Aanbieder-overzicht · halfjaarlijks',en:'Provider register · biannual'},type:{nl:'Kwantitatief',en:'Quantitative'}},
+        {level:'outputs',title:{nl:'Tevredenheid consulenten over diagnose-instrument (1–5)',en:'Case worker satisfaction with diagnosis tool (1–5)'},meta:{nl:'Interne enquête · jaarlijks',en:'Internal survey · annual'},type:{nl:'Kwalitatief gekwantificeerd',en:'Qualitative quantified'}}
+      ]
     },
     {
       tag:{nl:'Sport & gezondheid',en:'Sport & health'},
@@ -852,7 +1115,7 @@ const DATA = {
         {nl:'Leerlingen uit huishoudens onder de armoedegrens maken via school gebruik van hoogwaardige sportfaciliteiten.',en:'Pupils from low-income households use high-quality sports facilities through school.'}
       ],
       outputs:[
-        {nl:'Financiële regelingen voor deelname aan lokale sportclubs zijn ingericht en toegankelijk.',en:'Financial schemes for participation in local sports clubs are set up and accessible.'},
+        {nl:'Financiële regelingen voor deelname aan sportclubs zijn ingericht en toegankelijk.',en:'Financial schemes for participation are set up and accessible.'},
         {nl:'Alle scholen bieden laagdrempelig hoogwaardige sportfaciliteiten aan.',en:'All schools offer accessible high-quality sports facilities.'}
       ],
       activities:[
@@ -860,14 +1123,20 @@ const DATA = {
         {nl:'We zetten samenwerkingsverbanden op tussen sportclubs en scholen.',en:'We set up partnerships between sports clubs and schools.'},
         {nl:'We maken subsidies beschikbaar voor sportfaciliteiten op scholen.',en:'We make subsidies available for school sports facilities.'}
       ],
-      assumption:{nl:'Financiële barrières zijn een belangrijke reden voor kinderen uit huishoudens onder de armoedegrens om geen lid te worden van een lokale sportclub.',en:'Financial barriers are a key reason children from low-income households don\'t join local sports clubs.'}
+      assumption:{nl:'Financiële barrières zijn een belangrijke reden voor kinderen uit huishoudens onder de armoedegrens om geen lid te worden van een lokale sportclub.',en:'Financial barriers are a key reason children from low-income households don\'t join local sports clubs.'},
+      indicators:[
+        {level:'impact',title:{nl:'Verschil in sportdeelname kinderen onder/boven armoedegrens',en:'Gap in sports participation below vs above poverty line'},meta:{nl:'CBS jeugd­monitor + lokale data · jaarlijks',en:'Youth monitor + local data · annual'},type:{nl:'Kwantitatief',en:'Quantitative'}},
+        {level:'outcomes',title:{nl:'% kinderen onder armoedegrens lid sportclub',en:'% children below poverty line in sports club'},meta:{nl:'Sportclub-registraties + inkomensdata · jaarlijks',en:'Club registrations + income data · annual'},type:{nl:'Kwantitatief',en:'Quantitative'}},
+        {level:'outputs',title:{nl:'Aantal aangemelde gebruikers sport-toeslag',en:'Sign-ups for sports allowance'},meta:{nl:'Aanvraagsysteem · maandelijks',en:'Application system · monthly'},type:{nl:'Kwantitatief',en:'Quantitative'}},
+        {level:'activities',title:{nl:'Aantal samenwerkingsverbanden school–sportclub',en:'Number of school–club partnerships'},meta:{nl:'Convenanten-overzicht · halfjaarlijks',en:'Partnership register · biannual'},type:{nl:'Kwantitatief',en:'Quantitative'}}
+      ]
     }
   ]
 };
 
 const I18N = {
   nl: {
-    'nav.what':'Wat is het?','nav.value':'Waarde','nav.approach':'Aanpak','nav.toc':'Methodologie','nav.indicators':'Indicatoren','nav.ai':'AI & data','nav.examples':'Voorbeelden','nav.contact':'Contact',
+    'nav.what':'Wat is het?','nav.value':'Waarde','nav.approach':'Aanpak','nav.toc':'Methodologie','nav.indicators':'Indicatoren','nav.ai':'AI & data','nav.examples':'Voorbeelden','nav.dashboard':'Dashboard','nav.contact':'Contact',
     'hero.tag':'Datagedreven Impact Management',
     'hero.h1.a':'Maak je','hero.h1.b':'impact','hero.h1.c':'meetbaar, zichtbaar en stuurbaar.',
     'hero.sub':'Van evaluatie achteraf naar dynamisch impact monitoren, evalueren en bijsturen. Gebruik data en AI voor concrete maatschappelijke impact.',
@@ -877,39 +1146,53 @@ const I18N = {
     'what.p1':'Steeds meer organisaties willen data gebruiken om inzicht te krijgen in de impact van hun werk. Met datagedreven impact management kan een organisatie beter beoordelen welk werk er nodig is om een beoogde maatschappelijke impact te bereiken, hoe effectief ze werkt, en kan ze communiceren over behaalde resultaten.',
     'what.p2':'Hier geldt het bekende gezegde <strong>"meten is weten"</strong>. Door de beoogde en gerealiseerde impact te specificeren en te kwantificeren kan een organisatie haar strategieën en activiteiten beter inrichten.',
     'what.p3':'Klassieke beleidsanalyse en -evaluatie zijn gericht op het achteraf afleggen van verantwoording. Dit is belangrijk maar is vaak minder goed bruikbaar voor besluitvorming over <strong>lopende of toekomstige activiteiten</strong>.',
-    'what.quote':'Meten is weten.','what.cite':'— Nederlands gezegde',
+    'what.quote':'What gets measured gets managed.','what.cite':'— Peter Drucker',
     'value.label':'02 — Waarom',
     'value.title.a':'Hoe creëert het','value.title.b':'waarde','value.title.c':'voor jouw organisatie?',
     'value.intro':'Klik op een pijler om meer te lezen.',
     'approach.label':'03 — Onze aanpak',
     'approach.title.a':'Wij introduceren impactmanagement in','approach.title.b':'vier stappen.',
-    'approach.intro':'Een dynamische cyclus van meten, leren en bijsturen — geen lineair traject met een eindstreep. Klik op een stap voor een toelichting.',
+    'approach.intro':'Een dynamische cyclus van meten, leren en bijsturen — geen lineair traject met een eindstreep. Klik op een stap voor de details.',
     'toc.label':'04 — Methodologie',
     'toc.title.a':'De','toc.title.b':'Theory of Change.',
     'toc.intro':'Een impactmodel beschrijft hoe je gewenste impact tot stand komt via een logische keten van resultaten. Klik op een niveau om te zien wat er bedoeld wordt — en hoe controle en invloed verschuiven.',
     'toc.note':'💡 We redeneren altijd <strong>terug</strong> — van impact naar activiteiten. Zo voorkom je dat je druk bent met dingen die niet bijdragen aan je doel.',
     'ind.label':'05 — Indicatoren',
     'ind.title.a':'Hoe maak je impact','ind.title.b':'meetbaar','ind.title.c':'?',
-    'ind.intro':'Een indicator is een graadmeter die een indruk geeft van een situatie of ontwikkeling. Zonder goede indicatoren blijft je impactmodel een mooi verhaal — met indicatoren wordt het stuurbaar.',
-    'ind.p1':'<strong>Kwantitatief en kwalitatief.</strong> Een goede meetset combineert beide. Kwantitatieve indicatoren (aantal, percentage) tonen schaal. Kwalitatieve indicatoren (tevredenheid, perceptie) tonen kwaliteit en diepte van het resultaat.',
-    'ind.p2':'<strong>Kwalitatieve data kwantificeren.</strong> Om kwalitatieve data vergelijkbaar te maken kun je classificatieschalen gebruiken — bijvoorbeeld een 1-tot-10-schaal voor tevredenheid of een 5-puntsschaal voor ervaren impact.',
-    'ind.p3':'<strong>De logica van het impactmodel als routekaart.</strong> Door indicatoren te koppelen aan elk niveau van het model — impact, outcomes, outputs, activiteiten — meet je gericht en samenhangend, in plaats van losse datapunten.',
-    'ind.scale1.left':'Zeer ontevreden','ind.scale1.right':'Zeer tevreden',
-    'ind.scale2.left':'Weinig impact','ind.scale2.right':'Veel impact',
-    'ind.crit.title':'Een goede indicator is...',
-    'ind.crit.m.h':'Meeteenheid','ind.crit.m.p':'Wat wordt er gemeten? Aantal, percentage, niveau, score.',
-    'ind.crit.r.h':'Relevant','ind.crit.r.p':'Vertelt iets betekenisvols over het resultaat in de Theory of Change.',
-    'ind.crit.c.h':'Concreet','ind.crit.c.p':'Scherp geformuleerd, niet multi-interpretabel — voor alle stakeholders helder.',
-    'ind.crit.h.h':'Haalbaar','ind.crit.h.p':'Praktisch te meten — je hebt de juiste middelen om de data op te halen.',
+    'ind.what':'<strong>Wat is een indicator?</strong> Een indicator is een graadmeter die een indruk geeft van een situatie of ontwikkeling. Door indicatoren te koppelen aan elk niveau van het impactmodel maak je gericht meten mogelijk.',
+    'ind.use':'<strong>Waarvoor gebruik je ze?</strong> Met indicatoren toets je of je werk daadwerkelijk een meetbare bijdrage levert aan de beoogde impact — en op welke punten je moet bijsturen.',
+    'ind.examples.heading':'Drie soorten indicatoren — drie voorbeelden',
+    'ind.t.quant':'Kwantitatief','ind.t.qual':'Kwalitatief','ind.t.qualnum':'Kwalitatief gekwantificeerd',
+    'ind.ex1.h':'% goedgekeurde investeringsplannen',
+    'ind.ex1.p':'Meet schaal en voortgang in een duidelijk getal — direct vergelijkbaar over tijd en tussen partijen.',
+    'ind.ex1.e':'Streefwaarde 90% · gemeten 86% · status: on track.',
+    'ind.ex2.h':'Inwonertevredenheid over digitale dienstverlening',
+    'ind.ex2.p':'Vangt perceptie en ervaring — diepte en kwaliteit van het resultaat, niet alleen volume.',
+    'ind.ex2.e':'"Inwoners ervaren de dienstverlening als gebruiksvriendelijk."',
+    'ind.ex3.h':'Tevredenheid op een schaal van 1–10',
+    'ind.ex3.p':'Maakt kwalitatieve data vergelijkbaar door classificatieschalen — bijvoorbeeld een rapportcijfer of NPS-score.',
+    'ind.ex3.e':'Gemiddeld 7,8 — boven streefwaarde van 7,5.',
     'ai.label':'06 — Innovatieve dataverzameling',
     'ai.title.a':'Slimme','ai.title.b':'AI-toepassingen','ai.title.c':'om data te verzamelen.',
-    'ai.intro':'ADC heeft in diverse projecten big data gescraped en AI ingezet om beter zicht te krijgen op risico\'s, gedrag te monitoren en interventies te richten. Drie voorbeelden van toepassingen die laten zien hoe innovatieve dataverzameling impactgedreven werken kan versterken.',
+    'ai.intro':'ADC heeft in diverse projecten big data gescraped en AI ingezet om beter zicht te krijgen op risico\'s, gedrag te monitoren en interventies te richten. Drie voorbeelden:',
     'ai.row.input':'Big data input','ai.row.model':'Analyse model','ai.row.value':'Waarde','ai.row.relevance':'Relevantie',
     'examples.label':'07 — In de praktijk',
     'examples.title.a':'Drie','examples.title.b':'impactmodellen','examples.title.c':'uit de praktijk.',
-    'examples.intro':'Klik op een voorbeeld om het volledige impactmodel uit te klappen — van impact via outcomes en outputs tot activiteiten, inclusief onderliggende aannames.',
+    'examples.intro':'Klik op een voorbeeld om het volledige impactmodel + bijbehorende indicatoren uit te klappen.',
+    'examples.tab.model':'Impactmodel','examples.tab.indicators':'Indicatoren',
     'examples.label.vision':'Visie','examples.label.impact':'Impact','examples.label.outcomes':'Outcomes','examples.label.outputs':'Outputs','examples.label.activities':'Activiteiten','examples.label.assumption':'Aanname',
-    'contact.label':'08 — Aan de slag',
+    'dash.label':'08 — Sturen op impact',
+    'dash.title.a':'Een','dash.title.b':'dashboard','dash.title.c':'dat impact tot leven brengt.',
+    'dash.intro':'Een impactmodel komt pas écht tot leven als het stuurbaar wordt. In een dashboard koppel je elk niveau van je Theory of Change aan live indicatoren — zodat directie, beleid én uitvoering op hetzelfde beeld werken. Klik op een knoop om indicatoren te zien.',
+    'dash.tree.h':'Impactmodel — klik op een knoop',
+    'dash.legend.level':'Niveau','dash.legend.impact':'Impact','dash.legend.outcome':'Outcome','dash.legend.suboutcome':'Sub-outcome','dash.legend.output':'Output','dash.legend.activity':'Activiteit',
+    'dash.legend.status':'Status','dash.legend.ontrack':'On track','dash.legend.atrisk':'At risk','dash.legend.behind':'Behind',
+    'dash.kpi.total':'Totaal indicatoren','dash.kpi.ontrack':'On track','dash.kpi.atrisk':'At risk','dash.kpi.behind':'Behind',
+    'dash.cta.h':'Een dashboard op maat voor jouw organisatie?','dash.cta.p':'Wij bouwen impactdashboards die directie, beleidsmedewerkers en uitvoering verbinden — van Theory of Change tot live data.','dash.cta.btn':'Praat met Timon',
+    'dash.empty':'Selecteer een knoop in het impactmodel om bijbehorende indicatoren te zien.',
+    'dash.no-indicators':'Voor deze knoop zijn nog geen indicatoren gedefinieerd.',
+    'dash.current':'Huidig','dash.target':'Streef','dash.progress':'Voortgang',
+    'contact.label':'09 — Aan de slag',
     'contact.cta':'Klaar om je impact zichtbaar te maken? Wij denken graag mee.',
     'contact.body':'ADC is een datagedreven, multidisciplinaire consultancy met 150+ consultants in Amsterdam, Stockholm en Kopenhagen. We werken eind-tot-eind: van strategie tot dashboard, van Theory of Change tot governance.',
     'contact.btn':'Plan een gesprek',
@@ -917,7 +1200,7 @@ const I18N = {
     'footer.tag':'Where it all adds up. End-to-end data & AI-oplossingen — bridging data, processes and people.'
   },
   en: {
-    'nav.what':'What it is','nav.value':'Value','nav.approach':'Approach','nav.toc':'Methodology','nav.indicators':'Indicators','nav.ai':'AI & data','nav.examples':'Examples','nav.contact':'Contact',
+    'nav.what':'What it is','nav.value':'Value','nav.approach':'Approach','nav.toc':'Methodology','nav.indicators':'Indicators','nav.ai':'AI & data','nav.examples':'Examples','nav.dashboard':'Dashboard','nav.contact':'Contact',
     'hero.tag':'Data-driven Impact Management',
     'hero.h1.a':'Make your','hero.h1.b':'impact','hero.h1.c':'measurable, visible and actionable.',
     'hero.sub':'From retrospective evaluation to dynamic impact monitoring, evaluation and adjustment. Use data and AI for concrete societal impact.',
@@ -925,41 +1208,55 @@ const I18N = {
     'what.label':'01 — What it is',
     'what.title.a':'What is','what.title.b':'data-driven impact management','what.title.c':'?',
     'what.p1':'More and more organisations want to use data to understand the impact of their work. With data-driven impact management, an organisation can better assess what work is needed to achieve a desired societal impact, how effectively it is working, and can communicate about the results achieved.',
-    'what.p2':'The well-known saying applies here: <strong>"to measure is to know"</strong>. By specifying and quantifying intended and realised impact, an organisation can better shape its strategies and activities.',
+    'what.p2':'The well-known saying applies: <strong>"to measure is to know"</strong>. By specifying and quantifying intended and realised impact, an organisation can better shape its strategies and activities.',
     'what.p3':'Classical policy analysis and evaluation are aimed at retrospective accountability. This is important but is often less useful for decision-making about <strong>ongoing or future activities</strong>.',
-    'what.quote':'To measure is to know.','what.cite':'— Dutch saying',
+    'what.quote':'What gets measured gets managed.','what.cite':'— Peter Drucker',
     'value.label':'02 — Why',
     'value.title.a':'How does it create','value.title.b':'value','value.title.c':'for your organisation?',
     'value.intro':'Click any pillar to read more.',
     'approach.label':'03 — Our approach',
     'approach.title.a':'We introduce impact management in','approach.title.b':'four steps.',
-    'approach.intro':'A dynamic cycle of measuring, learning and adjusting — not a linear project with a finish line. Click on a step for more detail.',
+    'approach.intro':'A dynamic cycle of measuring, learning and adjusting — not a linear project with a finish line. Click on a step for details.',
     'toc.label':'04 — Methodology',
     'toc.title.a':'The','toc.title.b':'Theory of Change.',
     'toc.intro':'An impact model describes how desired impact is achieved through a logical sequence of results. Click any level to see what it means — and how control and influence shift.',
     'toc.note':'💡 We always reason <strong>backwards</strong> — from impact to activities. This prevents being busy with things that don\'t actually contribute to your goal.',
     'ind.label':'05 — Indicators',
     'ind.title.a':'How do you make impact','ind.title.b':'measurable','ind.title.c':'?',
-    'ind.intro':'An indicator is a gauge that gives an impression of a situation or development. Without good indicators, your impact model remains a nice story — with indicators, it becomes actionable.',
-    'ind.p1':'<strong>Quantitative and qualitative.</strong> A good measurement set combines both. Quantitative indicators (number, percentage) show scale. Qualitative indicators (satisfaction, perception) show quality and depth of the result.',
-    'ind.p2':'<strong>Quantify qualitative data.</strong> To make qualitative data comparable, use classification scales — for example a 1-to-10 scale for satisfaction or a 5-point scale for perceived impact.',
-    'ind.p3':'<strong>The logic of the impact model as a roadmap.</strong> By linking indicators to each level of the model — impact, outcomes, outputs, activities — you measure in a targeted and coherent way, instead of scattered data points.',
-    'ind.scale1.left':'Very dissatisfied','ind.scale1.right':'Very satisfied',
-    'ind.scale2.left':'Low impact','ind.scale2.right':'High impact',
-    'ind.crit.title':'A good indicator is...',
-    'ind.crit.m.h':'Measurable','ind.crit.m.p':'What is being measured? Number, percentage, level, score.',
-    'ind.crit.r.h':'Relevant','ind.crit.r.p':'Says something meaningful about the result in the Theory of Change.',
-    'ind.crit.c.h':'Concrete','ind.crit.c.p':'Sharply formulated, not open to interpretation — clear to all stakeholders.',
-    'ind.crit.h.h':'Feasible','ind.crit.h.p':'Practical to measure — you have the means to gather the data.',
+    'ind.what':'<strong>What is an indicator?</strong> An indicator is a gauge that gives an impression of a situation or development. By linking indicators to each level of the impact model, you make targeted measurement possible.',
+    'ind.use':'<strong>What do you use them for?</strong> With indicators you test whether your work actually contributes measurably to the intended impact — and where to adjust.',
+    'ind.examples.heading':'Three types of indicators — three examples',
+    'ind.t.quant':'Quantitative','ind.t.qual':'Qualitative','ind.t.qualnum':'Qualitative quantified',
+    'ind.ex1.h':'% approved investment plans',
+    'ind.ex1.p':'Measures scale and progress in a clear number — directly comparable over time and between parties.',
+    'ind.ex1.e':'Target 90% · measured 86% · status: on track.',
+    'ind.ex2.h':'Resident satisfaction with digital services',
+    'ind.ex2.p':'Captures perception and experience — depth and quality of result, not just volume.',
+    'ind.ex2.e':'"Residents experience services as user-friendly."',
+    'ind.ex3.h':'Satisfaction on a 1–10 scale',
+    'ind.ex3.p':'Makes qualitative data comparable through classification scales — for example a grade or NPS score.',
+    'ind.ex3.e':'Average 7.8 — above target of 7.5.',
     'ai.label':'06 — Innovative data collection',
     'ai.title.a':'Smart','ai.title.b':'AI applications','ai.title.c':'to gather data.',
-    'ai.intro':'ADC has scraped big data and deployed AI in various projects to gain better insight into risks, monitor behaviour and target interventions. Three examples that show how innovative data collection can strengthen impact-driven work.',
+    'ai.intro':'ADC has scraped big data and deployed AI in various projects to gain better insight into risks, monitor behaviour and target interventions. Three examples:',
     'ai.row.input':'Big data input','ai.row.model':'Analytical model','ai.row.value':'Value','ai.row.relevance':'Relevance',
     'examples.label':'07 — In practice',
     'examples.title.a':'Three','examples.title.b':'impact models','examples.title.c':'from practice.',
-    'examples.intro':'Click an example to expand the full impact model — from impact via outcomes and outputs to activities, including underlying assumptions.',
+    'examples.intro':'Click an example to expand the full impact model + corresponding indicators.',
+    'examples.tab.model':'Impact model','examples.tab.indicators':'Indicators',
     'examples.label.vision':'Vision','examples.label.impact':'Impact','examples.label.outcomes':'Outcomes','examples.label.outputs':'Outputs','examples.label.activities':'Activities','examples.label.assumption':'Assumption',
-    'contact.label':'08 — Get started',
+    'dash.label':'08 — Steering on impact',
+    'dash.title.a':'A','dash.title.b':'dashboard','dash.title.c':'that brings impact to life.',
+    'dash.intro':'An impact model only really comes to life when it becomes actionable. In a dashboard, you link each level of your Theory of Change to live indicators — so leadership, policy and operations work from the same picture. Click any node to see indicators.',
+    'dash.tree.h':'Impact model — click a node',
+    'dash.legend.level':'Level','dash.legend.impact':'Impact','dash.legend.outcome':'Outcome','dash.legend.suboutcome':'Sub-outcome','dash.legend.output':'Output','dash.legend.activity':'Activity',
+    'dash.legend.status':'Status','dash.legend.ontrack':'On track','dash.legend.atrisk':'At risk','dash.legend.behind':'Behind',
+    'dash.kpi.total':'Total indicators','dash.kpi.ontrack':'On track','dash.kpi.atrisk':'At risk','dash.kpi.behind':'Behind',
+    'dash.cta.h':'A custom dashboard for your organisation?','dash.cta.p':'We build impact dashboards that connect leadership, policy and operations — from Theory of Change to live data.','dash.cta.btn':'Talk to Timon',
+    'dash.empty':'Select a node in the impact model to see its indicators.',
+    'dash.no-indicators':'No indicators have been defined for this node yet.',
+    'dash.current':'Current','dash.target':'Target','dash.progress':'Progress',
+    'contact.label':'09 — Get started',
     'contact.cta':'Ready to make your impact visible? Let\'s talk.',
     'contact.body':'ADC is a data-driven, multidisciplinary consultancy with 150+ consultants in Amsterdam, Stockholm and Copenhagen. We deliver end-to-end: from strategy to dashboard, from Theory of Change to governance.',
     'contact.btn':'Schedule a conversation',
@@ -969,22 +1266,18 @@ const I18N = {
 };
 
 let currentLang = 'nl';
+let activeAiTab = 0;
 
-// ============ HELPERS ============
 function pickLang(field){
   if (typeof field === 'string') return field;
   return field[currentLang] || field.nl;
 }
 
 // ============ ADC GEOMETRIC SHAPE COMPOSITION ============
-// Generate a "scattered geometric shapes" SVG for backgrounds
 function makeShapeComposition(seed, density){
-  // density = number of shapes
   const shapes = ['plus','diamond','pill','bone','dot','x','rsquare'];
-  // pseudo-random based on seed
   let s = seed;
   const rand = () => { s = (s*9301 + 49297) % 233280; return s/233280; };
-
   let svg = '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">';
   for (let i=0;i<density;i++){
     const shape = shapes[Math.floor(rand()*shapes.length)];
@@ -1006,7 +1299,17 @@ function injectShapes(){
   document.getElementById('tocShapes2').innerHTML = makeShapeComposition(311, 9);
   document.getElementById('aiShapes1').innerHTML = makeShapeComposition(555, 14);
   document.getElementById('aiShapes2').innerHTML = makeShapeComposition(777, 8);
+  document.getElementById('dashShapes1').innerHTML = makeShapeComposition(411, 12);
+  document.getElementById('dashShapes2').innerHTML = makeShapeComposition(923, 9);
   document.getElementById('contactShapes').innerHTML = makeShapeComposition(999, 16);
+}
+
+// ============ TIMON PHOTO ============
+function loadTimonPhoto(){
+  const el = document.getElementById('timonPhoto');
+  if (TIMON_PHOTO_B64 && TIMON_PHOTO_B64 !== '__TIMON_B64__'){
+    el.style.backgroundImage = `url('data:image/jpeg;base64,${TIMON_PHOTO_B64}')`;
+  }
 }
 
 // ============ RENDER ============
@@ -1032,10 +1335,12 @@ function renderSteps(){
     <div class="step" data-idx="${i}">
       <div class="step-num">${s.num}</div>
       <h3>${pickLang(s.title)}</h3>
-      <p>${pickLang(s.desc)}</p>
-      <ul>
-        ${pickLang(s.bullets).map(b=>`<li>${b}</li>`).join('')}
-      </ul>
+      <div class="step-short">${pickLang(s.short)}</div>
+      <div class="step-detail">
+        <p>${pickLang(s.detail)}</p>
+        <ul>${pickLang(s.bullets).map(b=>`<li>${b}</li>`).join('')}</ul>
+      </div>
+      <div class="step-expand">${currentLang==='nl'?'Selecteer voor details':'Select for details'} <span>+</span></div>
       <div class="arrow-between">→</div>
     </div>
   `).join('');
@@ -1083,22 +1388,40 @@ function renderTocDetail(idx){
 }
 
 function renderAi(){
-  const root = document.getElementById('aiGrid');
+  const tabs = document.getElementById('aiTabs');
+  const panels = document.getElementById('aiPanels');
   const t = I18N[currentLang];
-  root.innerHTML = DATA.ai.map(a=>`
-    <div class="ai-card">
-      <div class="ai-card-header">
-        <div class="ai-tag">${pickLang(a.tag)}</div>
-        <h3>${pickLang(a.title)}</h3>
+  tabs.innerHTML = DATA.ai.map((a,i)=>`
+    <button class="ai-tab ${i===activeAiTab?'active':''}" data-idx="${i}">
+      <span class="ai-tab-num">${i+1}</span>${pickLang(a.tag)}
+    </button>
+  `).join('');
+  panels.innerHTML = DATA.ai.map((a,i)=>`
+    <div class="ai-panel ${i===activeAiTab?'active':''}" data-idx="${i}">
+      <div class="ai-panel-header">
+        <div>
+          <div class="ai-tag">${pickLang(a.tag)}</div>
+          <h3>${pickLang(a.title)}</h3>
+        </div>
       </div>
-      <div class="ai-card-body">
-        <div class="ai-row"><div class="label">${t['ai.row.input']}</div><div class="content">${pickLang(a.input)}</div></div>
-        <div class="ai-row"><div class="label">${t['ai.row.model']}</div><div class="content">${pickLang(a.model)}</div></div>
-        <div class="ai-row"><div class="label">${t['ai.row.value']}</div><div class="content">${pickLang(a.value)}</div></div>
-        <div class="ai-row"><div class="label">${t['ai.row.relevance']}</div><div class="content">${pickLang(a.relevance)}</div></div>
+      <div class="ai-panel-body">
+        <div class="ai-pill"><div class="label">${t['ai.row.input']}</div><h4>${currentLang==='nl'?'Wat gaat erin?':'What goes in?'}</h4><p>${pickLang(a.input)}</p></div>
+        <div class="ai-pill"><div class="label">${t['ai.row.model']}</div><h4>${currentLang==='nl'?'Wat doet het model?':'What does the model do?'}</h4><p>${pickLang(a.model)}</p></div>
+        <div class="ai-pill"><div class="label">${t['ai.row.value']}</div><h4>${currentLang==='nl'?'Wat levert het op?':'What does it deliver?'}</h4><p>${pickLang(a.value)}</p></div>
+        <div class="ai-pill"><div class="label">${t['ai.row.relevance']}</div><h4>${currentLang==='nl'?'Waarom relevant?':'Why relevant?'}</h4><p>${pickLang(a.relevance)}</p></div>
       </div>
     </div>
   `).join('');
+  tabs.querySelectorAll('.ai-tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      activeAiTab = parseInt(btn.dataset.idx);
+      tabs.querySelectorAll('.ai-tab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      panels.querySelectorAll('.ai-panel').forEach(p=>{
+        p.classList.toggle('active', parseInt(p.dataset.idx)===activeAiTab);
+      });
+    });
+  });
 }
 
 function renderExamples(){
@@ -1114,34 +1437,52 @@ function renderExamples(){
         <div class="example-toggle">+</div>
       </div>
       <div class="example-body">
-        <div class="impact-model">
-          <div class="im-row">
-            <div class="im-label" style="background:#E8E8E2;color:var(--ink)">${t['examples.label.vision']}</div>
-            <div class="im-cards"><div class="im-card" style="background:#F4F4EE">${pickLang(ex.vision)}</div></div>
+        <div class="example-tabs">
+          <button class="example-tab active" data-tab="model">${t['examples.tab.model']}</button>
+          <button class="example-tab" data-tab="indicators">${t['examples.tab.indicators']}</button>
+        </div>
+        <div class="example-tab-content active" data-tab="model">
+          <div class="impact-model">
+            <div class="im-row">
+              <div class="im-label" style="background:#E8E8E2;color:var(--ink)">${t['examples.label.vision']}</div>
+              <div class="im-cards"><div class="im-card" style="background:#F4F4EE">${pickLang(ex.vision)}</div></div>
+            </div>
+            <div class="im-arrow">↑</div>
+            <div class="im-row">
+              <div class="im-label impact">${t['examples.label.impact']}</div>
+              <div class="im-cards"><div class="im-card" style="background:var(--ink);color:var(--paper);border-color:var(--ink)">${pickLang(ex.impact)}</div></div>
+            </div>
+            <div class="im-arrow">↑</div>
+            <div class="im-row">
+              <div class="im-label outcomes">${t['examples.label.outcomes']}</div>
+              <div class="im-cards">${ex.outcomes.map(o=>`<div class="im-card" style="background:var(--green)">${pickLang(o)}</div>`).join('')}</div>
+            </div>
+            <div class="im-arrow">↑</div>
+            <div class="im-row">
+              <div class="im-label outputs">${t['examples.label.outputs']}</div>
+              <div class="im-cards">${ex.outputs.map(o=>`<div class="im-card" style="background:var(--pink)">${pickLang(o)}</div>`).join('')}</div>
+            </div>
+            <div class="im-arrow">↑</div>
+            <div class="im-row">
+              <div class="im-label activities">${t['examples.label.activities']}</div>
+              <div class="im-cards">${ex.activities.map(o=>`<div class="im-card" style="background:var(--lilac)">${pickLang(o)}</div>`).join('')}</div>
+            </div>
+            <div class="im-row" style="margin-top:8px">
+              <div></div>
+              <div class="im-assumption"><span class="im-assumption-label">${t['examples.label.assumption']}</span><span>${pickLang(ex.assumption)}</span></div>
+            </div>
           </div>
-          <div class="im-arrow">↑</div>
-          <div class="im-row">
-            <div class="im-label impact">${t['examples.label.impact']}</div>
-            <div class="im-cards"><div class="im-card" style="background:var(--ink);color:var(--paper);border-color:var(--ink)">${pickLang(ex.impact)}</div></div>
-          </div>
-          <div class="im-arrow">↑</div>
-          <div class="im-row">
-            <div class="im-label outcomes">${t['examples.label.outcomes']}</div>
-            <div class="im-cards">${ex.outcomes.map(o=>`<div class="im-card" style="background:var(--green)">${pickLang(o)}</div>`).join('')}</div>
-          </div>
-          <div class="im-arrow">↑</div>
-          <div class="im-row">
-            <div class="im-label outputs">${t['examples.label.outputs']}</div>
-            <div class="im-cards">${ex.outputs.map(o=>`<div class="im-card" style="background:var(--pink)">${pickLang(o)}</div>`).join('')}</div>
-          </div>
-          <div class="im-arrow">↑</div>
-          <div class="im-row">
-            <div class="im-label activities">${t['examples.label.activities']}</div>
-            <div class="im-cards">${ex.activities.map(o=>`<div class="im-card" style="background:var(--lilac)">${pickLang(o)}</div>`).join('')}</div>
-          </div>
-          <div class="im-row" style="margin-top:8px">
-            <div></div>
-            <div class="im-assumption"><span class="im-assumption-label">${t['examples.label.assumption']}</span><span>${pickLang(ex.assumption)}</span></div>
+        </div>
+        <div class="example-tab-content" data-tab="indicators">
+          <div class="ex-ind-grid">
+            ${ex.indicators.map(ind=>`
+              <div class="ex-ind">
+                <div class="ex-ind-level ${ind.level}">${t['examples.label.'+ind.level]}</div>
+                <h5>${pickLang(ind.title)}</h5>
+                <div class="ex-ind-meta">${pickLang(ind.meta)}</div>
+                <div class="ex-ind-type">${pickLang(ind.type)}</div>
+              </div>
+            `).join('')}
           </div>
         </div>
       </div>
@@ -1151,7 +1492,260 @@ function renderExamples(){
     block.querySelector('.example-header').addEventListener('click',()=>{
       block.classList.toggle('open');
     });
+    block.querySelectorAll('.example-tab').forEach(tab=>{
+      tab.addEventListener('click',(e)=>{
+        e.stopPropagation();
+        const tabName = tab.dataset.tab;
+        block.querySelectorAll('.example-tab').forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        block.querySelectorAll('.example-tab-content').forEach(c=>{
+          c.classList.toggle('active', c.dataset.tab===tabName);
+        });
+      });
+    });
   });
+}
+
+// ============ DASHBOARD ============
+let dashSelectedNodeId = null;
+let dashChartInstances = [];
+
+function dashTypeLabel(type){
+  const t = I18N[currentLang];
+  const map = {
+    'impact': t['dash.legend.impact'],
+    'outcome': t['dash.legend.outcome'],
+    'suboutcome': t['dash.legend.suboutcome'],
+    'output': t['dash.legend.output'],
+    'activity': t['dash.legend.activity']
+  };
+  return map[type] || type;
+}
+
+function renderDashKpis(){
+  const t = I18N[currentLang];
+  let total=0, on=0, risk=0, behind=0;
+  DASHBOARD_DATA.nodes.forEach(n=>{
+    if (n.indicators){
+      n.indicators.forEach(ind=>{
+        total++;
+        if (ind.status==='on-track') on++;
+        else if (ind.status==='at-risk') risk++;
+        else if (ind.status==='behind') behind++;
+      });
+    }
+  });
+  const root = document.getElementById('dashKpis');
+  const pct = (n)=> total ? Math.round(n/total*100) : 0;
+  root.innerHTML = `
+    <div class="kpi"><div class="kpi-label">${t['dash.kpi.total']}</div><div class="kpi-value">${total}</div><div class="kpi-bar"><div style="width:100%;background:var(--ink)"></div></div></div>
+    <div class="kpi good"><div class="kpi-label">${t['dash.kpi.ontrack']}</div><div class="kpi-value">${on}</div><div class="kpi-bar"><div style="width:${pct(on)}%;background:var(--status-good)"></div></div></div>
+    <div class="kpi risk"><div class="kpi-label">${t['dash.kpi.atrisk']}</div><div class="kpi-value">${risk}</div><div class="kpi-bar"><div style="width:${pct(risk)}%;background:var(--status-risk)"></div></div></div>
+    <div class="kpi bad"><div class="kpi-label">${t['dash.kpi.behind']}</div><div class="kpi-value">${behind}</div><div class="kpi-bar"><div style="width:${pct(behind)}%;background:var(--status-bad)"></div></div></div>
+  `;
+}
+
+function aggregateNodeStatus(node){
+  // pick worst status from indicators if present, else from descendants
+  if (node.indicators && node.indicators.length){
+    const statuses = node.indicators.map(i=>i.status);
+    if (statuses.includes('behind')) return 'behind';
+    if (statuses.includes('at-risk')) return 'at-risk';
+    return 'on-track';
+  }
+  return null;
+}
+
+function renderDashTree(){
+  const root = document.getElementById('dashTree');
+  // Build tree structure following edges (child -> parent)
+  // We render in order: impact -> outcomes -> suboutcomes -> outputs -> activities
+  const byId = {};
+  DASHBOARD_DATA.nodes.forEach(n=>byId[n.id]=n);
+  // children map: parent -> [child ids]
+  const children = {};
+  DASHBOARD_DATA.edges.forEach(e=>{
+    children[e.target] = children[e.target] || [];
+    children[e.target].push(e.source);
+  });
+
+  function renderNode(id, html){
+    const n = byId[id];
+    if (!n) return '';
+    const status = aggregateNodeStatus(n);
+    html += `<div class="tree-node" data-level="${n.type}" data-id="${n.id}">
+      <span class="tn-bullet ${n.type}"></span>
+      <span>${n.label}</span>
+      ${status?`<span class="tn-status ${status}"></span>`:''}
+    </div>`;
+    const kids = children[id] || [];
+    // Sort kids: outcome > suboutcome > output > activity
+    const order = {'outcome':1,'suboutcome':2,'output':3,'activity':4};
+    kids.sort((a,b)=> (order[byId[a]?.type]||9) - (order[byId[b]?.type]||9));
+    kids.forEach(kid=>{ html = renderNode(kid, html); });
+    return html;
+  }
+
+  // Find root impact node
+  const impactNode = DASHBOARD_DATA.nodes.find(n=>n.type==='impact');
+  let html = '';
+  if (impactNode){
+    html = renderNode(impactNode.id, html);
+  }
+  root.innerHTML = html;
+  root.querySelectorAll('.tree-node').forEach(el=>{
+    el.addEventListener('click',()=>{
+      root.querySelectorAll('.tree-node').forEach(n=>n.classList.remove('selected'));
+      el.classList.add('selected');
+      dashSelectedNodeId = el.dataset.id;
+      renderDashDetail();
+    });
+  });
+}
+
+function renderDashDetail(){
+  // Destroy any previously created chart instances
+  dashChartInstances.forEach(c=>{ try{c.destroy();}catch(e){} });
+  dashChartInstances = [];
+  const root = document.getElementById('dashDetail');
+  const t = I18N[currentLang];
+  if (!dashSelectedNodeId){
+    root.innerHTML = `<div class="dash-empty">${t['dash.empty']}</div>`;
+    return;
+  }
+  const node = DASHBOARD_DATA.nodes.find(n=>n.id===dashSelectedNodeId);
+  if (!node) return;
+  const status = aggregateNodeStatus(node);
+  const indicators = node.indicators || [];
+  let html = `
+    <div class="dd-tag">${dashTypeLabel(node.type)}</div>
+    <h3>${node.label}</h3>
+    ${node.description?`<div class="dd-desc">${node.description}</div>`:''}
+  `;
+  if (indicators.length){
+    indicators.forEach((ind,i)=>{
+      const statusClass = ind.status||'on-track';
+      const progressPct = ind.progress!=null ? ind.progress : 0;
+      html += `
+        <div class="dd-indicator">
+          <h4>${ind.label}</h4>
+          <div class="dd-indicator-meta">
+            <span><strong>${t['dash.current']}:</strong> ${ind.currentValue!=null?ind.currentValue:'?'}${ind.unit||''}</span>
+            <span><strong>${t['dash.target']}:</strong> ${ind.targetValue!=null?ind.targetValue:'?'}${ind.unit||''}</span>
+            <span><strong>${t['dash.progress']}:</strong> ${progressPct}%</span>
+          </div>
+          <div class="dd-progress"><div class="dd-progress-bar ${statusClass}" style="width:${Math.min(100,progressPct)}%"></div></div>
+          <div class="dd-chart-wrap ${ind.chartType==='pie'?'doughnut':''}"><canvas class="dd-chart" id="chart-${node.id}-${i}"></canvas></div>
+        </div>
+      `;
+    });
+  } else {
+    html += `<div class="dash-empty" style="padding:24px 0">${t['dash.no-indicators']}</div>`;
+  }
+  root.innerHTML = html;
+
+  // Render charts after DOM is in place
+  indicators.forEach((ind,i)=>{
+    const canvas = document.getElementById(`chart-${node.id}-${i}`);
+    if (!canvas) return;
+    drawIndicatorChart(canvas, ind);
+  });
+}
+
+function statusColor(status){
+  return status==='behind' ? 'rgba(255,111,111,1)' : status==='at-risk' ? 'rgba(255,184,74,1)' : 'rgba(45,212,110,1)';
+}
+function statusColorLight(status){
+  return status==='behind' ? 'rgba(255,111,111,.15)' : status==='at-risk' ? 'rgba(255,184,74,.15)' : 'rgba(45,212,110,.15)';
+}
+
+function drawIndicatorChart(canvas, ind){
+  const status = ind.status || 'on-track';
+  const color = statusColor(status);
+  const colorLight = statusColorLight(status);
+  let cfg;
+  if (ind.chartType==='line' && ind.data?.type==='timeseries'){
+    const points = ind.data.points;
+    cfg = {
+      type:'line',
+      data:{
+        labels: points.map(p=>p.date.slice(0,7)),
+        datasets:[{
+          data: points.map(p=>p.value),
+          borderColor: color,
+          backgroundColor: colorLight,
+          borderWidth:2.5,
+          tension:0.25,
+          fill:true,
+          pointRadius:2,
+          pointHoverRadius:5,
+          pointBackgroundColor: color
+        },
+        ind.targetValue!=null?{
+          data: points.map(()=>ind.targetValue),
+          borderColor: 'rgba(10,10,10,.4)',
+          borderDash:[5,4],
+          borderWidth:1.5,
+          fill:false,
+          pointRadius:0
+        }:null].filter(Boolean)
+      },
+      options: chartOpts(ind)
+    };
+  } else if (ind.chartType==='bar' && ind.data?.type==='categorical'){
+    const cats = ind.data.categories;
+    cfg = {
+      type:'bar',
+      data:{
+        labels: cats.map(c=>c.category),
+        datasets:[{
+          data: cats.map(c=>c.value),
+          backgroundColor: cats.map(c=>c.category==='Nederland'?color:'rgba(10,10,10,.45)'),
+          borderRadius:4
+        }]
+      },
+      options: chartOpts(ind, true)
+    };
+  } else if (ind.chartType==='pie' && ind.data?.type==='categorical'){
+    const cats = ind.data.categories;
+    const palette = ['rgba(45,212,110,.9)','rgba(255,184,74,.9)','rgba(255,111,111,.85)','rgba(167,139,250,.85)','rgba(10,10,10,.5)'];
+    cfg = {
+      type:'doughnut',
+      data:{
+        labels: cats.map(c=>c.category),
+        datasets:[{
+          data: cats.map(c=>c.value),
+          backgroundColor: cats.map((c,i)=>palette[i%palette.length]),
+          borderColor:'#FAFAF7',
+          borderWidth:2
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'right',labels:{boxWidth:10,font:{size:10}}}}
+      }
+    };
+  } else {
+    return;
+  }
+  const inst = new Chart(canvas, cfg);
+  dashChartInstances.push(inst);
+}
+
+function chartOpts(ind, hideXGrid){
+  return {
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{enabled:true}},
+    scales:{
+      x:{grid:{display:false},ticks:{font:{size:10}}},
+      y:{
+        beginAtZero: ind.chartType!=='line',
+        grid:{color:'rgba(10,10,10,.06)'},
+        ticks:{font:{size:10}}
+      }
+    }
+  };
 }
 
 function applyI18n(){
@@ -1170,9 +1764,11 @@ function renderAll(){
   renderToc();
   renderAi();
   renderExamples();
+  renderDashKpis();
+  renderDashTree();
+  renderDashDetail();
 }
 
-// ============ EVENTS ============
 document.querySelectorAll('.lang-switch button').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.lang-switch button').forEach(b=>b.classList.remove('active'));
@@ -1183,7 +1779,19 @@ document.querySelectorAll('.lang-switch button').forEach(btn=>{
 });
 
 injectShapes();
+loadTimonPhoto();
 renderAll();
+// Auto-select impact node on load
+setTimeout(()=>{
+  const impactNode = DASHBOARD_DATA.nodes.find(n=>n.type==='impact');
+  if (impactNode){
+    dashSelectedNodeId = impactNode.id;
+    document.querySelectorAll('#dashTree .tree-node').forEach(n=>{
+      if (n.dataset.id===impactNode.id) n.classList.add('selected');
+    });
+    renderDashDetail();
+  }
+},100);
 </script>
 </body>
 </html>
