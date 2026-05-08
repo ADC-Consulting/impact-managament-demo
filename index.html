@@ -183,15 +183,18 @@
   .pillar:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 var(--ink)}
   .pillar.active{background:var(--ink);color:var(--green)}
   .pillar.active .pillar-num{background:var(--green);color:var(--ink)}
+  .pillar-head{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:18px;gap:12px;
+  }
   .pillar-icon{
-    color:var(--ink);font-size:32px;margin-bottom:12px;line-height:0;
-    display:flex;
+    color:var(--ink);font-size:32px;line-height:0;display:flex;
   }
   .pillar-icon svg{width:32px;height:32px}
   .pillar-num{
     width:36px;height:36px;border-radius:50%;background:var(--ink);color:var(--green);
     display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;
-    font-family:'DM Sans',sans-serif;margin-bottom:18px;transition:all .25s;
+    font-family:'DM Sans',sans-serif;transition:all .25s;flex-shrink:0;
   }
   .pillar-title{font-family:'DM Sans',sans-serif;font-weight:700;font-size:20px;line-height:1.15;margin-bottom:16px}
   .pillar-short{font-size:14px;line-height:1.5;flex:1}
@@ -265,15 +268,19 @@
   .step.active{background:var(--ink);color:var(--paper)}
   .step.active .step-num{background:var(--green);color:var(--ink)}
   .step:hover:not(.active){background:#F0F0EA}
+  .step-head{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:14px;gap:10px;
+  }
   .step-icon{
-    color:var(--ink);font-size:28px;margin-bottom:10px;line-height:0;display:flex;
+    color:var(--ink);font-size:28px;line-height:0;display:flex;
   }
   .step-icon svg{width:28px;height:28px}
   .step-num{
     width:30px;height:30px;background:var(--ink);color:var(--green);
     border-radius:50%;display:flex;align-items:center;justify-content:center;
-    font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;margin-bottom:14px;
-    transition:all .25s;
+    font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;
+    transition:all .25s;flex-shrink:0;
   }
   .step h3{font-family:'DM Sans',sans-serif;font-size:20px;line-height:1.2;margin-bottom:14px;font-weight:700}
   .step .step-short{font-size:14px;line-height:1.5;flex:1}
@@ -314,25 +321,25 @@
   .toc-inner{max-width:1300px;margin:0 auto;position:relative;z-index:2}
   .toc-section-title em{color:var(--paper);background:var(--ink);padding:0 12px}
   .toc-intro-grid{
-    display:grid;grid-template-columns:1.2fr 1fr;gap:36px;align-items:start;
-    margin-top:-8px;margin-bottom:36px;
+    display:grid;grid-template-columns:1.3fr 1fr;gap:32px;align-items:center;
+    margin-top:8px;margin-bottom:36px;
   }
   @media (max-width:980px){
-    .toc-intro-grid{grid-template-columns:1fr;gap:28px}
+    .toc-intro-grid{grid-template-columns:1fr;gap:20px}
   }
-  .toc-intro-text{display:flex;flex-direction:column;gap:18px}
-  .toc-intro-photo{position:relative;align-self:stretch;display:flex;justify-content:center}
+  .toc-intro-text{display:flex;align-items:center}
+  .toc-intro-photo{position:relative;display:flex}
   .toc-photo-img{
-    width:100%;max-width:380px;aspect-ratio:3/4;
-    border-radius:20px;border:3px solid var(--ink);
+    width:100%;aspect-ratio:5/3;
+    border-radius:18px;border:2.5px solid var(--ink);
     background-size:cover;background-position:center;
-    box-shadow:6px 6px 0 var(--ink);
-    transform:rotate(-1.5deg);
+    box-shadow:5px 5px 0 var(--ink);
+    transform:rotate(-1deg);
   }
   @media (max-width:980px){
-    .toc-photo-img{aspect-ratio:4/3;max-width:none;transform:none}
+    .toc-photo-img{aspect-ratio:5/3;transform:none}
   }
-  .toc-lead{max-width:62ch;font-size:18px;color:var(--ink);margin:0;line-height:1.4}
+  .toc-lead{max-width:none;font-size:19px;color:var(--ink);margin:0;line-height:1.45}
   .toc-overview{margin-bottom:36px}
   .toc-overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
   .toc-overview-card{
@@ -375,14 +382,15 @@
   .toc-detail .example strong{display:block;margin-bottom:6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--green);font-weight:700}
   .toc-callout{
     background:var(--paper);border:2px solid var(--ink);border-radius:18px;
-    padding:20px 24px;display:flex;align-items:flex-start;gap:18px;
+    padding:22px 28px;display:flex;align-items:center;gap:22px;
+    margin-bottom:36px;
   }
   .toc-callout-icon{
-    flex-shrink:0;width:42px;height:42px;border-radius:50%;background:var(--ink);color:var(--green);
-    display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;
+    flex-shrink:0;width:48px;height:48px;border-radius:50%;background:var(--ink);color:var(--green);
+    display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;
   }
-  .toc-callout strong{display:block;font-family:'DM Sans',sans-serif;font-size:17px;font-weight:600;margin-bottom:4px;letter-spacing:-.01em}
-  .toc-callout p{font-size:14px;line-height:1.5;color:var(--ink-soft);margin:0}
+  .toc-callout strong{display:block;font-family:'DM Sans',sans-serif;font-size:18px;font-weight:600;margin-bottom:4px;letter-spacing:-.01em}
+  .toc-callout p{font-size:14.5px;line-height:1.55;color:var(--ink-soft);margin:0;max-width:75ch}
 
   /* ============ INDICATORS (simplified) ============ */
   section.indicators{padding:84px 36px;max-width:1200px;margin:0 auto;position:relative}
@@ -445,8 +453,8 @@
     font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;color:var(--ink-soft);
   }
 
-  /* gauge variant */
-  .iv-gauge{display:flex;justify-content:center;padding:8px 0 4px}
+  /* scale variant - horizontal 1-10 score bar */
+  .iv-scale{display:block}
 
   /* line variant - sparkline */
   .iv-spark{height:60px}
@@ -671,13 +679,14 @@
 
   /* Fictief example disclaimer */
   .dash-disclaimer{
-    background:var(--yellow);border:2px solid var(--ink);border-radius:14px;
-    padding:14px 20px;margin-bottom:24px;font-size:14px;line-height:1.5;
-    display:flex;align-items:center;gap:12px;
+    background:var(--paper-warm);border:1px dashed var(--ink-soft);border-radius:8px;
+    padding:8px 14px;margin-bottom:20px;font-size:12px;line-height:1.45;
+    color:var(--ink-soft);
+    display:flex;align-items:center;gap:8px;
   }
-  .dash-disclaimer strong{font-weight:700}
+  .dash-disclaimer strong{font-weight:700;color:var(--ink)}
   .dash-disclaimer::before{
-    content:'⚠';font-size:20px;flex-shrink:0;
+    content:'ⓘ';font-size:13px;flex-shrink:0;color:var(--ink-soft);
   }
 
   .dash-content{padding:0}
@@ -724,6 +733,17 @@
     font-size:10.5px;color:var(--ink-soft);font-style:italic;
     margin-left:auto;letter-spacing:.02em;
   }
+  @media (max-width:760px){
+    .dash-tree-meta{
+      flex-direction:column;align-items:stretch;gap:10px;
+    }
+    .dash-tree-controls{
+      align-self:flex-start;
+    }
+    .dash-tree-zoom-hint{
+      margin-left:0;font-size:10px;
+    }
+  }
 
   .dash-tree-svg-wrap{
     position:relative;width:100%;
@@ -736,10 +756,10 @@
   .dash-tree-svg{display:block;width:100%;height:auto;cursor:grab;user-select:none}
   .dash-tree-svg:active{cursor:grabbing}
 
-  /* foreignObject card styling — white with neon accent stripe */
+  /* foreignObject card styling — fully colored per type with neon accent */
   .tree-card{
     width:100%;height:100%;
-    background:#FFFFFF;
+    background:var(--card-bg,#FFFFFF);
     border:1.5px solid var(--ink);
     border-radius:10px;
     cursor:pointer;
@@ -755,12 +775,9 @@
   }
   .tree-card.dimmed{opacity:.32}
 
-  .tree-card-bar{
-    height:6px;flex-shrink:0;background:var(--card-accent,#000);
-  }
   .tree-card-body{
     flex:1;display:flex;flex-direction:column;gap:6px;
-    padding:9px 14px 11px;
+    padding:10px 14px 12px;
     min-height:0;
   }
   .tree-card-tag-text{
@@ -768,7 +785,8 @@
     letter-spacing:.09em;text-transform:uppercase;display:block;line-height:1;
     align-self:flex-start;
     padding:3px 8px;border-radius:5px;
-    background:var(--card-accent-soft,#F0F0EA);
+    background:rgba(255,255,255,.55);
+    border:1px solid rgba(0,0,0,.18);
   }
   .tree-card-label{
     font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.32;font-weight:500;
@@ -779,7 +797,7 @@
   .tree-card-badge{
     position:absolute;top:10px;right:10px;
     width:16px;height:16px;border-radius:50%;
-    background:#E8E8E2;color:var(--ink);
+    background:#FFFFFF;color:var(--ink);
     font-size:10px;font-weight:700;line-height:16px;text-align:center;
     border:1.5px solid var(--ink);
   }
@@ -787,31 +805,26 @@
   .tree-card-badge.at-risk{background:#FFF347}
   .tree-card-badge.behind{background:#FF9BFC;color:var(--ink)}
 
-  /* type variants — set CSS vars for accent colors per brand guide */
+  /* type variants — full card background per brand guide */
   .tree-card.impact{
-    --card-accent: #A187FF;
-    --card-accent-soft: #e2daff;  /* violet-100 */
+    --card-bg: #e2daff;  /* violet-100 */
   }
   .tree-card.impact .tree-card-label{font-weight:700;font-size:14px}
 
   .tree-card.outcome{
-    --card-accent: #FF9BFC;       /* pink */
-    --card-accent-soft: #ffe0fe;  /* pink-100 */
+    --card-bg: #ffe0fe;  /* pink-100 */
   }
 
   .tree-card.suboutcome{
-    --card-accent: #2BEBCB;       /* teal */
-    --card-accent-soft: #bdf9ef;  /* teal-100 */
+    --card-bg: #bdf9ef;  /* teal-100 */
   }
 
   .tree-card.output{
-    --card-accent: #58EB81;       /* green */
-    --card-accent-soft: #cbf9d8;  /* green-100 */
+    --card-bg: #cbf9d8;  /* green-100 */
   }
 
   .tree-card.activity{
-    --card-accent: #FFF347;       /* yellow */
-    --card-accent-soft: #fffbc6;  /* yellow-100 */
+    --card-bg: #fffbc6;  /* yellow-100 */
   }
 
   /* tree edges — dark on light canvas */
@@ -1115,13 +1128,6 @@
     <div class="toc-intro-grid">
       <div class="toc-intro-text">
         <p class="toc-lead" data-i18n="toc.lead">Vier niveaus, één logische keten — van wat je doet, naar de verandering die je in de wereld wilt zien.</p>
-        <div class="toc-callout">
-          <div class="toc-callout-icon">↩︎</div>
-          <div>
-            <strong data-i18n="toc.callout.h">We redeneren altijd terug</strong>
-            <p data-i18n="toc.callout.p">Een impactmodel ontwerpen we van impact terug naar activiteiten — niet andersom. Zo voorkomen we dat we druk zijn met dingen die niet bijdragen aan het uiteindelijke doel.</p>
-          </div>
-        </div>
       </div>
       <div class="toc-intro-photo">
         <div class="toc-photo-img" id="methodologyPhotoImg"></div>
@@ -1130,6 +1136,14 @@
 
     <div class="toc-overview">
       <div class="toc-overview-grid" id="tocOverviewGrid"></div>
+    </div>
+
+    <div class="toc-callout">
+      <div class="toc-callout-icon">↩︎</div>
+      <div>
+        <strong data-i18n="toc.callout.h">We redeneren altijd terug</strong>
+        <p data-i18n="toc.callout.p">Een impactmodel ontwerpen we van impact terug naar activiteiten — niet andersom. Zo voorkomen we dat we druk zijn met dingen die niet bijdragen aan het uiteindelijke doel.</p>
+      </div>
     </div>
 
     <div class="toc-detail-wrap">
@@ -1174,19 +1188,16 @@
         <p data-i18n="ind.ex2.p">Vangt perceptie en ervaring — diepte en kwaliteit van het resultaat, niet alleen volume.</p>
         <div class="ind-visual">
           <div class="iv-label"><span data-i18n="ind.ex2.viz.lbl">Sentiment-analyse</span><strong>72%</strong></div>
-          <svg viewBox="0 0 280 70" xmlns="http://www.w3.org/2000/svg" style="height:70px">
+          <svg viewBox="0 0 280 36" xmlns="http://www.w3.org/2000/svg" style="height:36px">
             <!-- segmented bar: positive / neutral / negative -->
-            <rect x="0" y="22" width="201.6" height="26" fill="#2BBF61" rx="4"/>
-            <rect x="201.6" y="22" width="42" height="26" fill="#E5A93D"/>
-            <rect x="243.6" y="22" width="36.4" height="26" fill="#E15555" rx="4" style="border-radius:0 4px 4px 0"/>
-            <text x="100" y="40" text-anchor="middle" fill="#000000" font-family="DM Sans,sans-serif" font-size="11" font-weight="700">positief 72%</text>
-            <text x="222" y="40" text-anchor="middle" fill="#000000" font-family="DM Sans,sans-serif" font-size="9" font-weight="600">15%</text>
-            <text x="261" y="40" text-anchor="middle" fill="#000000" font-family="DM Sans,sans-serif" font-size="9" font-weight="600">13%</text>
-            <text x="0" y="14" fill="#2A2A2A" font-family="DM Sans,sans-serif" font-size="9" font-weight="600">😊 positief</text>
-            <text x="195" y="14" fill="#2A2A2A" font-family="DM Sans,sans-serif" font-size="9" font-weight="600">😐 neutraal</text>
-            <text x="245" y="14" fill="#2A2A2A" font-family="DM Sans,sans-serif" font-size="9" font-weight="600">😟 negatief</text>
-            <text x="0" y="64" fill="#2A2A2A" font-family="DM Sans,sans-serif" font-size="10" font-style="italic" data-i18n-svg="ind.ex2.viz.sample">N=412 open antwoorden, geclassificeerd</text>
+            <rect x="0" y="0" width="201.6" height="14" fill="#2BBF61" rx="4"/>
+            <rect x="201.6" y="0" width="42" height="14" fill="#E5A93D"/>
+            <rect x="243.6" y="0" width="36.4" height="14" fill="#E15555" rx="4" style="border-radius:0 4px 4px 0"/>
+            <text x="0" y="28" fill="#2A2A2A" font-family="DM Sans,sans-serif" font-size="9" font-weight="600">😊 positief 72%</text>
+            <text x="180" y="28" fill="#2A2A2A" font-family="DM Sans,sans-serif" font-size="9" font-weight="600">😐 15%</text>
+            <text x="225" y="28" fill="#2A2A2A" font-family="DM Sans,sans-serif" font-size="9" font-weight="600">😟 13%</text>
           </svg>
+          <div style="font-size:11px;color:var(--ink-soft);margin-top:4px"><span data-i18n-svg="ind.ex2.viz.sample">N=412 open antwoorden, geclassificeerd</span></div>
         </div>
       </div>
       <div class="ind-card">
@@ -1195,23 +1206,27 @@
         <p data-i18n="ind.ex3.p">Maakt kwalitatieve data vergelijkbaar door classificatieschalen — bijvoorbeeld een rapportcijfer of NPS-score.</p>
         <div class="ind-visual">
           <div class="iv-label"><span data-i18n="ind.ex3.viz.lbl">Gem. rapportcijfer</span><strong>7,8</strong></div>
-          <div class="iv-gauge">
-            <svg viewBox="0 0 200 110" xmlns="http://www.w3.org/2000/svg" style="width:180px;height:100px">
-              <!-- gauge arc background -->
-              <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#E8E8E2" stroke-width="14" stroke-linecap="round"/>
-              <!-- gauge fill: 7.8 / 10 = 78% of 180deg arc -->
-              <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#2BBF61" stroke-width="14" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="55.3"/>
-              <!-- target marker at 7.5 = 75% -->
-              <circle cx="172.85" cy="40.86" r="4" fill="#000000"/>
-              <!-- needle pointing at 7.8 -->
-              <line x1="100" y1="100" x2="174.85" y2="38.4" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
-              <circle cx="100" cy="100" r="6" fill="#000000"/>
-              <text x="20" y="100" font-family="DM Sans,sans-serif" font-size="10" font-weight="600" fill="#2A2A2A">1</text>
-              <text x="100" y="14" font-family="DM Sans,sans-serif" font-size="10" font-weight="600" fill="#2A2A2A" text-anchor="middle">5</text>
-              <text x="180" y="100" font-family="DM Sans,sans-serif" font-size="10" font-weight="600" fill="#2A2A2A" text-anchor="end">10</text>
+          <div class="iv-scale">
+            <svg viewBox="0 0 280 36" xmlns="http://www.w3.org/2000/svg" style="height:36px">
+              <!-- 1-10 scale bar with gradient -->
+              <defs>
+                <linearGradient id="scaleGrad" x1="0" x2="1" y1="0" y2="0">
+                  <stop offset="0" stop-color="#E15555"/>
+                  <stop offset="0.5" stop-color="#E5A93D"/>
+                  <stop offset="1" stop-color="#2BBF61"/>
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="280" height="14" rx="7" fill="url(#scaleGrad)"/>
+              <!-- target marker at 7.5 -->
+              <line x1="210" y1="-3" x2="210" y2="17" stroke="#000000" stroke-width="2"/>
+              <!-- score marker at 7.8 -->
+              <circle cx="218.4" cy="7" r="7" fill="#FFFFFF" stroke="#000000" stroke-width="2"/>
+              <text x="0" y="30" fill="#2A2A2A" font-family="DM Sans,sans-serif" font-size="9" font-weight="600">1</text>
+              <text x="140" y="30" fill="#2A2A2A" font-family="DM Sans,sans-serif" font-size="9" font-weight="600" text-anchor="middle">5</text>
+              <text x="280" y="30" fill="#2A2A2A" font-family="DM Sans,sans-serif" font-size="9" font-weight="600" text-anchor="end">10</text>
             </svg>
           </div>
-          <div style="font-size:11px;color:var(--ink-soft);margin-top:-4px"><span data-i18n="ind.ex3.viz.note">Streefwaarde 7,5 — boven doel</span></div>
+          <div style="font-size:11px;color:var(--ink-soft);margin-top:4px"><span data-i18n="ind.ex3.viz.note">Streefwaarde 7,5 — boven doel</span></div>
         </div>
       </div>
     </div>
@@ -1219,22 +1234,14 @@
 </section>
 
 <!-- ============ AI APPLICATIONS (rewired tabs) ============ -->
-<section class="ai collapsible-section" id="ai">
+<section class="ai" id="ai">
   <div class="shape-deco ai-shapes-1" id="aiShapes1" style="color:#FFFFFF"></div>
   <div class="shape-deco ai-shapes-2" id="aiShapes2" style="color:#FFFFFF"></div>
   <div class="ai-inner">
-    <div class="collapse-trigger" data-collapse-target="ai">
-      <div class="collapse-trigger-text">
-        <div class="section-label" data-i18n="ai.label">06 — Innovatieve dataverzameling</div>
-        <h2 class="section-title display ai-section-title"><span data-i18n="ai.title.a">Slimme</span> <em data-i18n="ai.title.b">AI-toepassingen</em> <span data-i18n="ai.title.c">om data te verzamelen.</span></h2>
-        <p class="collapse-trigger-teaser" data-i18n="ai.teaser">Drie voorbeelden van projecten waarin ADC big data en AI inzette om risico's te signaleren, gedrag te monitoren en interventies te richten.</p>
-      </div>
-      <button class="collapse-toggle-btn" aria-label="Open">+</button>
-    </div>
-    <div class="collapse-content">
-      <p class="ai-intro" data-i18n="ai.intro">ADC heeft in diverse projecten big data gescraped en AI ingezet om beter zicht te krijgen op risico's, gedrag te monitoren en interventies te richten. Drie voorbeelden:</p>
-      <div class="ai-list" id="aiList"></div>
-    </div>
+    <div class="section-label" data-i18n="ai.label">06 — Innovatieve dataverzameling</div>
+    <h2 class="section-title display ai-section-title"><span data-i18n="ai.title.a">Slimme</span> <em data-i18n="ai.title.b">AI-toepassingen</em> <span data-i18n="ai.title.c">om data te verzamelen.</span></h2>
+    <p class="ai-intro" data-i18n="ai.intro">ADC heeft in diverse projecten big data gescraped en AI ingezet om beter zicht te krijgen op risico's, gedrag te monitoren en interventies te richten. Drie voorbeelden:</p>
+    <div class="ai-list" id="aiList"></div>
   </div>
 </section>
 
@@ -1242,7 +1249,7 @@
 <section class="examples" id="examples">
   <div class="section-label" data-i18n="examples.label">07 — In de praktijk</div>
   <h2 class="section-title display"><span data-i18n="examples.title.a">Drie</span> <em data-i18n="examples.title.b">impactmodellen</em> <span data-i18n="examples.title.c">uit de praktijk.</span></h2>
-  <p style="max-width:65ch;font-size:17px;color:var(--ink-soft)" data-i18n="examples.intro">Klik op een voorbeeld om het volledige impactmodel + bijbehorende indicatoren uit te klappen.</p>
+  <p style="max-width:65ch;font-size:17px;color:var(--ink-soft)" data-i18n="examples.intro">Drie volledige impactmodellen — elk met de bijbehorende indicatoren.</p>
   <div id="examplesContainer"></div>
 </section>
 
@@ -1276,7 +1283,7 @@
               <span class="ctl-divider"></span>
               <button type="button" id="dashZoomReset" aria-label="Reset zoom" title="Reset" style="font-size:13px">⟲</button>
             </div>
-            <span class="dash-tree-zoom-hint" data-i18n="dash.tree.zoomhint">Dubbelklik kaart om in te zoomen · sleep om te pannen · Ctrl/⌘+scroll voor zoom</span>
+            <span class="dash-tree-zoom-hint" data-i18n="dash.tree.zoomhint">Dubbelklik kaart om in te zoomen · sleep om te pannen · Ctrl/⌘+scroll of pinch om te zoomen</span>
           </div>
           <div class="dash-tree-cols">
             <span class="l-impact" data-i18n="dash.legend.impact">Impact</span>
@@ -1634,7 +1641,7 @@ const I18N = {
     'ai.row.input':'Big data input','ai.row.model':'Analyse model','ai.row.value':'Waarde','ai.row.relevance':'Relevantie',
     'examples.label':'07 — In de praktijk',
     'examples.title.a':'Drie','examples.title.b':'impactmodellen','examples.title.c':'uit de praktijk.',
-    'examples.intro':'Klik op een voorbeeld om het volledige impactmodel + bijbehorende indicatoren uit te klappen.',
+    'examples.intro':'Drie volledige impactmodellen — elk met de bijbehorende indicatoren.',
     'examples.tab.model':'Impactmodel','examples.tab.indicators':'Indicatoren',
     'examples.label.vision':'Visie','examples.label.impact':'Impact','examples.label.outcomes':'Outcomes','examples.label.outputs':'Outputs','examples.label.activities':'Activiteiten','examples.label.assumption':'Aanname',
     'dash.label':'08 — Sturen op impact',
@@ -1642,7 +1649,7 @@ const I18N = {
     'dash.intro':'Een impactmodel komt pas écht tot leven als het stuurbaar wordt. In een dashboard koppel je elk niveau van je Theory of Change aan live indicatoren — zodat directie, beleid én uitvoering op hetzelfde beeld werken. Klik op een knoop om indicatoren te zien.',
     'dash.tree.h':'Impactmodel — klik op een knoop voor details',
     'dash.tree.hint':'Voorbeeld: Kansrijk opgroeien',
-    'dash.tree.zoomhint':'Dubbelklik kaart om in te zoomen · sleep om te pannen · Ctrl/⌘+scroll voor zoom',
+    'dash.tree.zoomhint':'Dubbelklik kaart om in te zoomen · sleep om te pannen · Ctrl/⌘+scroll of pinch om te zoomen',
     'dash.disclaimer':'Dit is een <strong>fictief gegenereerd voorbeeld</strong> ter illustratie. De data, indicatoren en trends in dit dashboard zijn niet ontleend aan een echte organisatie.',
     'dash.flow.title':'Impact-keten — klik op een blok om te focussen',
     'dash.flow.hint':'Activiteiten → Outputs → Outcomes → Impact',
@@ -1717,7 +1724,7 @@ const I18N = {
     'ai.row.input':'Big data input','ai.row.model':'Analytical model','ai.row.value':'Value','ai.row.relevance':'Relevance',
     'examples.label':'07 — In practice',
     'examples.title.a':'Three','examples.title.b':'impact models','examples.title.c':'from practice.',
-    'examples.intro':'Click an example to expand the full impact model + corresponding indicators.',
+    'examples.intro':'Three complete impact models — each with their corresponding indicators.',
     'examples.tab.model':'Impact model','examples.tab.indicators':'Indicators',
     'examples.label.vision':'Vision','examples.label.impact':'Impact','examples.label.outcomes':'Outcomes','examples.label.outputs':'Outputs','examples.label.activities':'Activities','examples.label.assumption':'Assumption',
     'dash.label':'08 — Steering on impact',
@@ -1725,7 +1732,7 @@ const I18N = {
     'dash.intro':'An impact model only really comes to life when it becomes actionable. In a dashboard, you link each level of your Theory of Change to live indicators — so leadership, policy and operations work from the same picture. Click any node to see indicators.',
     'dash.tree.h':'Impact model — click a node for details',
     'dash.tree.hint':'Example: Growing up with opportunity',
-    'dash.tree.zoomhint':'Double-click a card to zoom · drag to pan · Ctrl/⌘+scroll to zoom',
+    'dash.tree.zoomhint':'Double-click a card to zoom · drag to pan · Ctrl/⌘+scroll or pinch to zoom',
     'dash.disclaimer':'This is a <strong>fictional example</strong> for illustration purposes. The data, indicators and trends in this dashboard are not from a real organisation.',
     'dash.flow.title':'Impact chain — click a block to focus',
     'dash.flow.hint':'Activities → Outputs → Outcomes → Impact',
@@ -1815,8 +1822,10 @@ function renderPillars(){
   const PILLAR_ICONS = ['target','crosshair','medal','sparkles'];
   root.innerHTML = DATA.pillars.map((p,i)=>`
     <div class="pillar" data-idx="${i}">
-      <div class="pillar-icon">${ICONS[PILLAR_ICONS[i]]||ICONS['sparkle']||''}</div>
-      <div class="pillar-num">${p.num}</div>
+      <div class="pillar-head">
+        <div class="pillar-num">${p.num}</div>
+        <div class="pillar-icon">${ICONS[PILLAR_ICONS[i]]||ICONS['sparkle']||''}</div>
+      </div>
       <div class="pillar-title">${pickLang(p.title)}</div>
       <div class="pillar-short">${pickLang(p.short)}</div>
       <div class="pillar-detail">${pickLang(p.detail)}</div>
@@ -1833,8 +1842,10 @@ function renderSteps(){
   const STEP_ICONS = ['eye','compass','route','chart-line'];
   root.innerHTML = DATA.steps.map((s,i)=>`
     <div class="step" data-idx="${i}">
-      <div class="step-icon">${ICONS[STEP_ICONS[i]]||ICONS['layers']||''}</div>
-      <div class="step-num">${s.num}</div>
+      <div class="step-head">
+        <div class="step-num">${s.num}</div>
+        <div class="step-icon">${ICONS[STEP_ICONS[i]]||ICONS['layers']||''}</div>
+      </div>
       <h3>${pickLang(s.title)}</h3>
       <div class="step-short">${pickLang(s.short)}</div>
       <div class="step-detail">
@@ -1916,7 +1927,7 @@ function renderAi(){
   if (!root) return;
   const t = I18N[currentLang];
   root.innerHTML = DATA.ai.map((a,i)=>`
-    <div class="ai-item ${i===0?'open':''}" data-idx="${i}">
+    <div class="ai-item" data-idx="${i}">
       <div class="ai-item-header">
         <div class="ai-item-icon">${getAiIcon(i)}</div>
         <div class="ai-item-text">
@@ -1963,7 +1974,6 @@ function renderExamples(){
         <div class="example-toggle">+</div>
       </div>
       <div class="example-body">
-        <p class="example-hint">${t['examples.hint']||(currentLang==='nl'?'💡 Klik op een blok in het model om de bijbehorende indicator(en) te zien.':'💡 Click any block in the model to see the linked indicator(s).')}</p>
         <div class="example-split">
           <div class="impact-model">
             <div class="im-row">
@@ -2195,7 +2205,8 @@ function renderDashTree(){
   sortByParent(byType.activity, byType.output);
 
   // Layout: 5 rows, larger cards for better readability
-  const ROW_Y = { impact: 70, outcome: 230, suboutcome: 410, output: 600, activity: 800 };
+  // outcome / suboutcome / output rows pulled closer; impact + activity stay anchored
+  const ROW_Y = { impact: 70, outcome: 280, suboutcome: 440, output: 600, activity: 820 };
   const CARD_W = { impact: 380, outcome: 280, suboutcome: 260, output: 240, activity: 220 };
   const CARD_H = { impact: 100, outcome: 96, suboutcome: 100, output: 96, activity: 92 };
   const SVG_W = TREE_VIEWBOX.w;
@@ -2211,7 +2222,9 @@ function renderDashTree(){
       positions[arr[0].id] = arr[0]._pos;
       return;
     }
-    const margin = 80;
+    // Margin must accommodate half the card width so the leftmost/rightmost
+    // cards don't get clipped by the SVG viewBox edge.
+    const margin = Math.max(80, w/2 + 40);
     const usable = SVG_W - margin*2;
     arr.forEach((node, i)=>{
       const x = margin + (usable * i / (n-1));
@@ -2255,8 +2268,7 @@ function renderDashTree(){
     const status = aggregateNodeStatus(n);
     const badge = status ? `<div class="tree-card-badge ${status}" title="${status}">${status==='on-track'?'✓':status==='at-risk'?'!':'×'}</div>` : '';
     cardsHtml += `<foreignObject x="${x}" y="${y}" width="${p.w}" height="${p.h}">
-      <div xmlns="http://www.w3.org/1999/xhtml" class="tree-card ${n.type}" data-id="${n.id}">
-        <div class="tree-card-bar"></div>
+      <div xmlns="http://www.w3.org/1999/xhtml" class="tree-card ${n.type}" data-id="${n.id}" title="${escape(n.label)}">
         <div class="tree-card-body">
           <span class="tree-card-tag-text">${tagText[n.type]||n.type}</span>
           <div class="tree-card-label">${escape(n.label)}</div>
@@ -2320,6 +2332,66 @@ function renderDashTree(){
       applyTreeViewBox();
     });
     window.addEventListener('mouseup',()=>{ isPanning=false; svg.style.cursor=''; });
+
+    // Touch: one-finger drag = pan, two-finger pinch = zoom
+    let touchPanLastX = 0, touchPanLastY = 0, touchPanning = false;
+    let pinchStartDist = 0, pinchStartZoom = 1, pinchFx = 0.5, pinchFy = 0.5;
+    function getTouchDist(t1, t2){
+      const dx = t2.clientX - t1.clientX, dy = t2.clientY - t1.clientY;
+      return Math.hypot(dx, dy);
+    }
+    svg.addEventListener('touchstart',(e)=>{
+      if (e.touches.length === 1){
+        if (e.target.closest('.tree-card')) return;
+        touchPanning = true;
+        touchPanLastX = e.touches[0].clientX;
+        touchPanLastY = e.touches[0].clientY;
+      } else if (e.touches.length === 2){
+        touchPanning = false;
+        pinchStartDist = getTouchDist(e.touches[0], e.touches[1]);
+        pinchStartZoom = dashTreeView.zoom;
+        const rect = svg.getBoundingClientRect();
+        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        pinchFx = (midX - rect.left) / rect.width;
+        pinchFy = (midY - rect.top) / rect.height;
+        e.preventDefault();
+      }
+    }, { passive: false });
+    svg.addEventListener('touchmove',(e)=>{
+      if (e.touches.length === 1 && touchPanning){
+        e.preventDefault();
+        const rect = svg.getBoundingClientRect();
+        const scaleX = (TREE_VIEWBOX.w / dashTreeView.zoom) / rect.width;
+        const scaleY = (TREE_VIEWBOX.h / dashTreeView.zoom) / rect.height;
+        dashTreeView.panX -= (e.touches[0].clientX - touchPanLastX) * scaleX;
+        dashTreeView.panY -= (e.touches[0].clientY - touchPanLastY) * scaleY;
+        touchPanLastX = e.touches[0].clientX;
+        touchPanLastY = e.touches[0].clientY;
+        applyTreeViewBox();
+      } else if (e.touches.length === 2 && pinchStartDist > 0){
+        e.preventDefault();
+        const dist = getTouchDist(e.touches[0], e.touches[1]);
+        const factor = dist / pinchStartDist;
+        setTreeZoom(pinchStartZoom * factor, pinchFx, pinchFy);
+      }
+    }, { passive: false });
+    svg.addEventListener('touchend',(e)=>{
+      if (e.touches.length === 0){
+        touchPanning = false;
+        pinchStartDist = 0;
+      } else if (e.touches.length === 1){
+        // pinch ended, switch to single-touch pan from the remaining finger
+        pinchStartDist = 0;
+        touchPanning = true;
+        touchPanLastX = e.touches[0].clientX;
+        touchPanLastY = e.touches[0].clientY;
+      }
+    });
+    svg.addEventListener('touchcancel',()=>{
+      touchPanning = false;
+      pinchStartDist = 0;
+    });
   }
 }
 
