@@ -140,15 +140,6 @@
   .hero-shapes-1{top:60px;right:-40px;width:560px;height:560px}
   .hero-shapes-2{bottom:40px;left:-60px;width:280px;height:280px;opacity:.7}
 
-  /* Pattern-bg as hero background — overrides the loader's default fixed positioning */
-  section.hero #pattern-bg-host{
-    position:absolute !important;
-    inset:0;
-    z-index:1;
-    pointer-events:none;
-    overflow:hidden;
-  }
-
   /* ============ WHAT ============ */
   section.what{padding:84px 36px;max-width:1200px;margin:0 auto}
   .section-label{
@@ -1056,7 +1047,8 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
-  <div id="pattern-bg-host" data-base="./" data-colour="#000000" data-bg="transparent"></div>
+  <div class="shape-deco hero-shapes-1" id="heroShapes1" style="color:#FFFFFF"></div>
+  <div class="shape-deco hero-shapes-2" id="heroShapes2" style="color:#FFFFFF"></div>
   <div class="hero-content">
     <div class="hero-text">
       <div class="hero-tag" data-i18n="hero.tag">Datagedreven Impact Management</div>
@@ -2849,6 +2841,5 @@ setTimeout(()=>{
   if (impactNode) selectDashNode(impactNode.id);
 },100);
 </script>
-<script type="module" src="assets/pattern-bg.js"></script>
 </body>
 </html>
